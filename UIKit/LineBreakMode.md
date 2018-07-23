@@ -28,9 +28,9 @@ typedef NS_ENUM(NSInteger, UILineBreakMode) {
 
 因为映射的枚举值一样所以即使 NS* 用了 UI* 也不会出错
 
-NSLineBreakByWordWrapping;以单词为显示单位显示，后面部分省略不显示
-NSLineBreakByCharWrapping;以字符为显示单位显示，后面部分省略不显示。
-NSLineBreakByClipping;剪切与文本宽度相同的内容长度，后半部分被删除。
-NSLineBreakByTruncatingHead;前面部分文字以……方式省略，显示尾部文字内容。
-NSLineBreakByTruncatingTail;结尾部分的内容以……方式省略，显示头的文字内容。
-NSLineBreakByTruncatingMiddle;中间的内容以……方式省略，显示头尾的文字内容。
+* NSLineBreakByWordWrapping;以单词为显示单位显示，后面部分省略不显示。
+* NSLineBreakByCharWrapping;以字符为显示单位显示，后面部分省略不显示。
+* NSLineBreakByClipping;剪切与文本宽度相同的内容长度，后半部分被删除。
+* NSLineBreakByTruncatingHead;前面部分文字以……方式省略，显示尾部文字内容。
+* NSLineBreakByTruncatingTail;结尾部分的内容以……方式省略，显示头的文字内容。
+* NSLineBreakByTruncatingMiddle;中间的内容以……方式省略，显示头尾的文字内容。
