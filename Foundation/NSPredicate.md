@@ -1,3 +1,5 @@
+* 由于使用markdown可能造成字符被转义等不确定错误。。。
+
 > ###### 元字符
 
 | 元字符 | 描述 |
@@ -52,7 +54,7 @@
 | ? | 匹配0或1个正好在它之前的那个字符。注意：这个元字符不是所有的软件都支持的 | 
 | {i} {i,j} | 匹配指定数目的字符，这些字符是在它之前的表达式定义的。例如正则表达式A[0-9]{3} 能够匹配字符"A"后面跟着正好3个数字字符的串，例如A123、A348等，但是不匹配A1234。而正则表达式[0-9]{4,6} 匹配连续的任意4个、5个或者6个数字 |
 
-> 常用正则
+> ###### 常用正则
 
 | 作用 | 正则 | 评注 |
 | ------ | ------ | ------ |
@@ -119,3 +121,497 @@
 |匹配首尾空格的正则表达式 | (^s*)\|(s*$) |
 |匹配Email地址的正则表达式 | w+([-+.]w+)*@w+([-.]w+)*.w+([-.]w+)* |
 |匹配网址URL | http://([w-]+.)+[w-]+(/[w- ./?%&=]*)?| 
+
+
+例如：判断是否是合法的整数或浮点数
+NSString *regex = @"^-?([1-9]d*|[1-9]d*.d*|0.d*[1-9]d*|0?.0+|0)$";
+NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+BOOL result = [pred evaluateWithObject:@"要判断的string"];
+
+
+> ###### NSPredicate的用法
+
+
+* 数组筛选
+读入了一个array1，然后想把array2中符合array1中内容的元素过滤出来。
+傻瓜式做法就是两个for循环，一个一个进行比较，效率极低。
+其实一个循环甚至无循环就可以搞定了，那就需要用NSPredicate
+
+一个循环
+
+```
+NSMutableArray *filterArray = [NSMutableArray arrayWithObjects:@"pict", @"blackrain", @"ip", nil];
+NSMutableArray *contentArray = [NSMutableArray arrayWithObjects:@"I am a picture.", @"I am a guy", @"I am gagaga", @"ipad", @"iphone", nil];
+for (NSString *tempFilter in filterArray) {
+  NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"SELF CONTAINS %@", tempFilter];
+  NSArray *tempResultArray = [contentArray filteredArrayUsingPredicate:filterPredicate];
+  NSLog(@"result:%@",tempResultArray);
+}
+```
+
+无需循环 过滤出来不包含filterArray中的所有item的元素。
+```
+NSMutableArray *filterArray = [NSMutableArray arrayWithObjects:@"abc1", @"abc2", nil];
+NSMutableArray *contentArray = [NSMutableArray arrayWithObjects:@"a1", @"abc1", @"abc4", @"abc2", nil];
+NSPredicate *thePredicate = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", filterArray];
+[contentArray filterUsingPredicate:thePredicate];
+```
+
+1） 当使用聚合类的操作符(SELF in 集合操作符)时是可以不需要循环的 
+2）当使用单个比较类(CONTAINS 字符串比较操作符)的操作符时可以一个循环来搞定 CONTAINS
+
+
+* 文件筛选
+```
+// 生成文件路径下文件集合列表
+NSString *defaultPath = [[NSBundle mainBundle] resourcePath];
+NSArray *contentsDict = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:defaultPath error:nil];
+
+// 简单比较
+NSString *match = @"ddyImg-999.png";
+NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@", match];
+NSArray *results1 = [contentsDict filteredArrayUsingPredicate:predicate];﻿
+// match里like的用法（类似Sql中的用法）
+NSString *match = @"ddyImg-*.png";
+NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF like %@", match];
+NSArray *results2 = [directoryContents filteredArrayUsingPredicate:predicate];﻿
+// 大小写比较 ［c］表示忽略大小写，［d］表示忽略重音，可以在一起使用，如下：
+NSString *match = @"ddyImg-*.png";
+NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF like[cd] %@", match];
+NSArray *results3 = [directoryContents filteredArrayUsingPredicate:predicate];﻿
+// 使用正则
+NSString *match = @"ddyImg-\\d{3}\\.png";  //ddyImg-123.png
+NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF matches %@", match];
+NSArray *results4 = [directoryContents filteredArrayUsingPredicate:predicate];﻿
+```
+
+* Format：
+  * (1)比较运算符>,<,==,>=,<=,!= 
+可用于数值及字符串
+例：@"number > 100"
+  * (2)范围运算符：IN、BETWEEN
+例：@"number BETWEEN {1,5}"
+      @"address IN {'shanghai','beijing'}"
+  * (3)字符串本身:SELF 
+例：@“SELF == ‘APPLE’"
+  * (4)字符串相关：BEGINSWITH、ENDSWITH、CONTAINS
+例：@"name CONTAIN[cd] 'ang'"   //包含某个字符串
+       @"name BEGINSWITH[c] 'sh'"     //以某个字符串开头
+       @"name ENDSWITH[d] 'ang'"      //以某个字符串结束
+        注:[c]不区分大小写[d]不区分发音符号即没有重音符号[cd]既不区分大小写，也不区分发音符号。
+  * (5)通配符：LIKE
+例：@"name LIKE[cd] '*er*'"    //*代表通配符,Like也接受[cd].
+       @"name LIKE[cd] '???er*'"
+  * (6)正则表达式：MATCHES
+例：NSString *regex = @"^A.+e$";   //以A开头，e结尾
+      @"name MATCHES %@",regex
+
+> ###### 实际应用
+
+* 对NSArray进行过滤 
+```
+NSArray *array = [[NSArray alloc]initWithObjects:@"beijing",@"shanghai",@"guangzou",@"wuhan", nil];    
+NSString *string = @"ang";    
+NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF CONTAINS %@",string];    
+NSLog(@"%@",[array filteredArrayUsingPredicate:pred]);
+```
+
+* 判断字符串首字母是否为字母
+```
+NSString *regex = @"[A-Za-z]+";    
+NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];    
+    
+if ([predicate evaluateWithObject:aString]) {    
+} 
+```
+* 字符串替换
+```
+NSError* error = NULL;    
+NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:@"(encoding=\")[^\"]+(\")"    
+                                                                            options:0    
+                                                                            error:&error];    
+NSString* sample = @"<xml encoding=\"abc\"></xml><xml encoding=\"def\"></xml><xml encoding=\"ttt\"></xml>";    
+NSLog(@"Start:%@",sample);    
+NSString* result = [regex stringByReplacingMatchesInString:sample    
+                                                      options:0    
+                                                       range:NSMakeRange(0, sample.length)    
+                                                      withTemplate:@"$1utf-8$2"];    
+NSLog(@"Result:%@", result); 
+```
+
+* 截取字符串
+```
+//组装一个字符串，需要把里面的网址解析出来    
+NSString *urlString=@"<meta/><link/><title>1Q84 BOOK1</title></head><body>";    
+    
+//NSRegularExpression类里面调用表达的方法需要传递一个NSError的参数。下面定义一个      
+NSError *error;    
+    
+//http+:[^\\s]* 这个表达式是检测一个网址的。(?<=title\>).*(?=</title)截取html文章中的<title></title>中内文字的正则表达式    
+NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(?<=title\\>).*(?=</title)" options:0 error:&error];    
+    
+if (regex != nil) {    
+    NSTextCheckingResult *firstMatch=[regex firstMatchInString:urlString options:0 range:NSMakeRange(0, [urlString length])];    
+        
+    if (firstMatch) {    
+        NSRange resultRange = [firstMatch rangeAtIndex:0];    
+            
+        //从urlString当中截取数据    
+        NSString *result=[urlString substringWithRange:resultRange];    
+        //输出结果    
+        NSLog(@"->%@<-",result);    
+    }    
+        
+}
+```
+
+* NSDate进行筛选
+```
+ 
+//日期在十天之内:  
+NSDate *endDate = [[NSDate date] retain];  
+NSTimeInterval timeInterval= [endDate timeIntervalSinceReferenceDate];  
+timeInterval -=3600*24*10;  
+NSDate *beginDate = [[NSDate dateWithTimeIntervalSinceReferenceDate:timeInterval] retain];  
+//对coredata进行筛选(假设有fetchRequest)  
+NSPredicate *predicate_date =  
+[NSPredicate predicateWithFormat:@"date >= %@ AND date <= %@", beginDate,endDate];  
+      
+[fetchRequest setPredicate:predicate_date];  
+//释放retained的对象  
+[endDate release];  
+[beginDate release]; 
+```
+
+> ###### 额外补充
+
+* 创建谓词
+
+> predicateWithFormat:
+NSPredicate *predicate;
+predicate = [NSPredicate predicateWithFormat:@"name == 'Herbie'"];
+注意:如果谓词串中的文本块未被引用,则被看做是键路径,即需要用引号表明是字符串,单引号,双引号均可.键路径可以在后台包含许多强大的功能
+计算谓词:
+BOOL match = [predicate evaluateWithObject:car];
+让谓词通过某个对象来计算自己的值,给出BOOL值
+
+* 燃料过滤器
+> filteredArrayUsingPredicate:是NSArray数组的一种类别方法,循环过滤数组中的内容,将值为YES的对象累积到结果数组中返回
+iphone编程应该密切注意谓词使用带来的性能问题
+
+* 格式说明符
+
+>%d和%@等插入数值和字符串,%K表示key
+还可以引入变量名,用$,类似环境变量,如:@"name == $NAME",再用predicateWithSubstitutionVariables调用来构造新的谓词(键/值字典),其中键是变量名,值是要插入的内容,注意这种情况下不能把变量当成键路径,只能用作值
+
+* 比较和逻辑运算符
+
+> ==等于
+\>:大于
+\>=和=>:大于或等于
+<:小于
+<=和=<:小于或等于
+!=和<>:不等于
+括号和逻辑运算AND、OR、NOT或者C样式的等效表达式&&、||、!
+注意：不等号适用于数字和字符串
+
+* 数组运算符
+
+> BETWEEN和IN后加某个数组，可以用{50,200}，也可以用%@格式说明符插入自己的对象，也可以用变量
+
+* SELF
+> self就表示对象本身
+
+* 字符串运算符
+> BEGINSWITH
+ENDSWITH
+CONTAINS
+[c],[d],[cd],后缀表示不区分大小写，不区分发音符号，两这个都不区分
+
+* LIKE运算符
+> 类似SQL的LIKES
+LIKE，与通配符“*”表示任意多和“?”表示一个结合使用
+LIKE也接受[cd]符号
+MATCHES可以使用正则表达式
+```
+Car *makeCar (NSString *name, NSString *make, NSString *model,  
+              int modelYear, int numberOfDoors, float mileage,  
+              int horsepower) {  
+    Car *car = [[[Car alloc] init] autorelease];  
+      
+    car.name = name;  
+    car.make = make;  
+    car.model = model;  
+    car.modelYear = modelYear;  
+    car.numberOfDoors = numberOfDoors;  
+    car.mileage = mileage;  
+      
+    Slant6 *engine = [[[Slant6 alloc] init] autorelease];  
+    [engine setValue: [NSNumber numberWithInt: horsepower]  
+              forKey: @"horsepower"];  
+    car.engine = engine;  
+      
+      
+    // Make some tires.  
+    // int i;  
+    for (int i = 0; i < 4; i++) {  
+        Tire * tire= [[[Tire alloc] init] autorelease];  
+        [car setTire: tire  atIndex: i];  
+    }  
+      
+    return (car);  
+      
+} // makeCar  
+  
+  
+int main (int argc, const char * argv[])  
+{  
+    NSAutoreleasePool *pool;  
+    pool = [[NSAutoreleasePool alloc] init];  
+      
+    Garage *garage = [[Garage alloc] init];  
+    garage.name = @"Joe's Garage";  
+      
+    Car *car;  
+    car = makeCar (@"Herbie", @"Honda", @"CRX", 1984, 2, 34000, 58);  
+    [garage addCar: car];  
+  
+    NSPredicate *predicate;  
+    predicate = [NSPredicate predicateWithFormat: @"name == 'Herbie'"];  
+    BOOL match = [predicate evaluateWithObject: car];  
+    NSLog (@"%s", (match) ? "YES" : "NO");  
+      
+    predicate = [NSPredicate predicateWithFormat: @"engine.horsepower > 150"];  
+    match = [predicate evaluateWithObject: car];  
+    NSLog (@"%s", (match) ? "YES" : "NO");  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name == %@", @"Herbie"];  
+    match = [predicate evaluateWithObject: car];  
+    NSLog (@"%s", (match) ? "YES" : "NO");  
+      
+    predicate = [NSPredicate predicateWithFormat: @"%K == %@", @"name", @"Herbie"];  
+    match = [predicate evaluateWithObject: car];  
+    NSLog (@"%s", (match) ? "YES" : "NO");  
+      
+    NSPredicate *predicateTemplate = [NSPredicate predicateWithFormat:@"name == $NAME"];  
+    NSDictionary *varDict;  
+    varDict = [NSDictionary dictionaryWithObjectsAndKeys:  
+               @"Herbie", @"NAME", nil];  
+    predicate = [predicateTemplate predicateWithSubstitutionVariables: varDict];  
+    NSLog(@"SNORGLE: %@", predicate);  
+    match = [predicate evaluateWithObject: car];  
+    NSLog (@"%s", (match) ? "YES" : "NO");  
+      
+      
+    car = makeCar (@"Badger", @"Acura", @"Integra", 1987, 5, 217036.7, 130);  
+    [garage addCar: car];  
+      
+    car = makeCar (@"Elvis", @"Acura", @"Legend", 1989, 4, 28123.4, 151);  
+    [garage addCar: car];  
+      
+    car = makeCar (@"Phoenix", @"Pontiac", @"Firebird", 1969, 2, 85128.3, 345);  
+    [garage addCar: car];  
+      
+    car = makeCar (@"Streaker", @"Pontiac", @"Silver Streak", 1950, 2, 39100.0, 36);  
+    [garage addCar: car];  
+      
+    car = makeCar (@"Judge", @"Pontiac", @"GTO", 1969, 2, 45132.2, 370);  
+    [garage addCar: car];  
+      
+    car = makeCar (@"Paper Car", @"Plymouth", @"Valiant", 1965, 2, 76800, 105);  
+    [garage addCar: car];  
+      
+    predicate = [NSPredicate predicateWithFormat: @"engine.horsepower > 150"];  
+    NSArray *cars = [garage cars];  
+    for (Car *car in [garage cars]) {  
+        if ([predicate evaluateWithObject: car]) {  
+            NSLog (@"%@", car.name);  
+        }  
+    }  
+  
+    predicate = [NSPredicate predicateWithFormat: @"engine.horsepower > 150"];  
+    NSArray *results;  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    NSArray *names;  
+    names = [results valueForKey:@"name"];  
+    NSLog (@"%@", names);  
+      
+    NSMutableArray *carsCopy = [cars mutableCopy];  
+    [carsCopy filterUsingPredicate: predicate];  
+    NSLog (@"%@", carsCopy);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"engine.horsepower > %d", 50];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicateTemplate = [NSPredicate predicateWithFormat: @"engine.horsepower > $POWER"];  
+    varDict = [NSDictionary dictionaryWithObjectsAndKeys:  
+               [NSNumber numberWithInt: 150], @"POWER", nil];  
+    predicate = [predicateTemplate predicateWithSubstitutionVariables: varDict];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat:  
+                 @"(engine.horsepower > 50) AND (engine.horsepower < 200)"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"oop %@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name < 'Newton'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", [results valueForKey: @"name"]);  
+      
+    predicate = [NSPredicate predicateWithFormat:  
+                 @"engine.horsepower BETWEEN { 50, 200 }"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    NSArray *betweens = [NSArray arrayWithObjects:  
+                         [NSNumber numberWithInt: 50], [NSNumber numberWithInt: 200], nil];  
+    predicate = [NSPredicate predicateWithFormat: @"engine.horsepower BETWEEN %@", betweens];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+  
+    predicateTemplate = [NSPredicate predicateWithFormat: @"engine.horsepower BETWEEN $POWERS"];  
+    varDict = [NSDictionary dictionaryWithObjectsAndKeys: betweens, @"POWERS", nil];  
+    predicate = [predicateTemplate predicateWithSubstitutionVariables: varDict];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name IN { 'Herbie', 'Snugs', 'Badger', 'Flap' }"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", [results valueForKey: @"name"]);  
+  
+    predicate = [NSPredicate predicateWithFormat: @"SELF.name IN { 'Herbie', 'Snugs', 'Badger', 'Flap' }"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", [results valueForKey: @"name"]);  
+      
+    names = [cars valueForKey: @"name"];  
+    predicate = [NSPredicate predicateWithFormat: @"SELF IN { 'Herbie', 'Snugs', 'Badger', 'Flap' }"];  
+    results = [names filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name BEGINSWITH 'Bad'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name BEGINSWITH 'HERB'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name BEGINSWITH[cd] 'HERB'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name LIKE[cd] '*er*'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name LIKE[cd] '???er*'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    NSArray *names1 = [NSArray arrayWithObjects: @"Herbie", @"Badger", @"Judge", @"Elvis", nil];  
+    NSArray *names2 = [NSArray arrayWithObjects: @"Judge", @"Paper Car", @"Badger", @"Phoenix", nil];  
+  
+    predicate = [NSPredicate predicateWithFormat: @"SELF IN %@", names1];  
+    results = [names2 filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", predicate);  
+    NSLog (@"%@", results);  
+      
+          
+    return 0;  
+  
+      
+      
+    predicate = [NSPredicate predicateWithFormat: @"modelYear > 1970"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name contains[cd] 'er'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+  
+    predicate = [NSPredicate predicateWithFormat: @"name beginswith 'B'"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"%K beginswith %@",  
+                 @"name", @"B"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"with args : %@", results);  
+      
+    predicateTemplate = [NSPredicate predicateWithFormat: @"name beginswith $NAME"];  
+    NSDictionary *dict = [NSDictionary   
+                          dictionaryWithObjectsAndKeys: @"Bad", @"NAME", nil];  
+    predicate = [predicateTemplate predicateWithSubstitutionVariables:dict];  
+    NSLog (@"SNORGLE: %@", predicate);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"name in { 'Badger', 'Judge', 'Elvis' }"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicateTemplate = [NSPredicate predicateWithFormat: @"name in $NAME_LIST"];  
+    names = [NSArray arrayWithObjects:@"Badger", @"Judge", @"Elvis", nil];  
+    dict = [NSDictionary   
+                          dictionaryWithObjectsAndKeys: names, @"NAME_LIST", nil];  
+    predicate = [predicateTemplate predicateWithSubstitutionVariables:dict];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicateTemplate = [NSPredicate predicateWithFormat: @"%K in $NAME_LIST", @"name"];  
+    dict = [NSDictionary   
+    dictionaryWithObjectsAndKeys: names, @"NAME_LIST", nil];  
+    predicate = [predicateTemplate predicateWithSubstitutionVariables:dict];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+    NSLog (@"xSNORGLE: %@", predicate);  
+      
+    // SELF is optional here.  
+    predicate = [NSPredicate predicateWithFormat:@"SELF.name in { 'Badger', 'Judge', 'Elvis' }"];  
+      
+    for (Car *car in cars) {  
+        if ([predicate evaluateWithObject: car]) {  
+            NSLog (@"SNORK : %@ matches", car.name);  
+        }  
+    }  
+      
+      
+#if 0  
+    predicate = [NSPredicate predicateWithFormat: @"ANY engine.horsepower > 200"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"SNORGLE: %@", predicate);  
+#endif  
+      
+    predicate = [NSPredicate predicateWithFormat: @"engine.horsepower > 200"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+      
+    predicate = [NSPredicate predicateWithFormat: @"tires.@sum.pressure > 10"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+  
+#if 0  
+    predicate = [NSPredicate predicateWithFormat: @"ALL engine.horsepower > 30"];  
+    results = [cars filteredArrayUsingPredicate: predicate];  
+    NSLog (@"%@", results);  
+#endif  
+      
+      
+    [garage release];  
+      
+    [pool release];  
+      
+    return (0);  
+      
+}
+ ```
+> 判断字符串首字母是否为字母。 
+Objective-c代码 
+NSString *regex = @"[A-Za-z]+"; 
+NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex]; 
+if ([predicate evaluateWithObject:aString]) { 
+} 
+
+
