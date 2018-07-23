@@ -1,1 +1,1 @@
-< ##### [LineBreakMode]()
+< ##### [LineBreakMode](https://github.com/starainDou/DDYKnowledge/blob/master/UIKit/LineBreakMode.md)
