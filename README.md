@@ -3,4 +3,4 @@
 ##### [NSPredicate 谓词+正则](https://github.com/starainDou/DDYKnowledge/blob/master/Foundation/NSPredicate.md)
 ##### [Singleton 单例写法和宏定义](https://github.com/starainDou/DDYKnowledge/blob/master/Foundation/Singleton.md)
 ##### [Wifi连接同时2/3/4/5G上网](https://github.com/starainDou/DDYKnowledge/blob/master/Others/Wifi.md)
-Wifi
+##### [3DTouch 快捷启动，Peak与Pop](https://github.com/starainDou/DDYKnowledge/blob/master/Others/3DTouch.md)
