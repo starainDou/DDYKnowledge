@@ -6,3 +6,5 @@
 ##### [3DTouch 快捷启动，Peak与Pop](https://github.com/starainDou/DDYKnowledge/blob/master/Files/3DTouch.md)
 ##### [nil/Nil/Null/NSNull](https://github.com/starainDou/DDYKnowledge/blob/master/Files/nil_Nil_Null_NSNull.md)
 ##### [performSelector多参数与NSInvocation](https://github.com/starainDou/DDYKnowledge/blob/master/Files/NSInvocation.md)
+##### [强制内联](https://github.com/starainDou/DDYKnowledge/blob/master/Files/alwaysInline.md)
+##### [use_frameworks](https://github.com/starainDou/DDYKnowledge/blob/master/Files/use_frameworks.md)
