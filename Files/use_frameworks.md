@@ -1,4 +1,4 @@
-\# 在Podfiel中是注释即使用和不使用
+\# 在Podfiel中是注释即使用和不使用, \#use_frameworks!表示不使用 use_frameworks!
 
 > # 使用\#use_frameworks!：
 
