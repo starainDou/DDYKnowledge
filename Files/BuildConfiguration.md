@@ -85,7 +85,7 @@ func requestHost() -> String {
 * 建立key值 APP_DISPLAY_NAME, 然后对应的修改选项值
 * 进到 Target ——> Info里，修改 Bundle Name 为$(APP_DISPLAY_NAME)
 
-4. 打包配置
+5. 打包配置
 
 	将Release环境以外的Skip Install配置成NO。
 
