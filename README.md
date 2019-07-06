@@ -10,3 +10,4 @@
 ##### [use_frameworks](https://github.com/starainDou/DDYKnowledge/blob/master/Files/use_frameworks.md)
 ##### [常用类型转换](https://github.com/starainDou/DDYKnowledge/blob/master/Files/typechange.md)
 ##### [主动退出App](https://github.com/starainDou/DDYKnowledge/blob/master/Files/exit.md)
+##### [BuildConfiguration 区分debug和release](https://github.com/starainDou/DDYKnowledge/blob/master/Files/BuildConfiguration.md)
