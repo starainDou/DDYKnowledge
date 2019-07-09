@@ -139,29 +139,290 @@ for (index,value) in menbers.enumerated() {
 }
 // 过滤数组元素
 let newTypes = types.filter { $0.count < 6 } //["none", "error"]
-// 创建包含100个元素的数组 ["条目0", "条目1" ... "条目99"]
-let items = Array(0..<100).map{ "条目\($0)"}
+// 创建包含100个元素的数组 ["条目0", "条目1" ... "条目5"]
+let intArray1 = Array(0..<6).map{ "条目\($0)"}
+let intArray2 = [Int](1...10) // 创建1-10连续整数数组
+let intArray3 = [Int](1..<11)// 创建1-10连续整数数组
+print("\(newTypes) \(intArray1) \(intArray2) \(intArray3)")
+// ["none", "error"] ["条目0", "条目1", "条目2", "条目3", "条目4", "条目5"] [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 ```
+
+注意：数组字面量(例如:[1,2,3])，本身是一个常量，如果我们对数组字面量进行添加等操作，则会引起编译器报错。
 
 # 字典
 
 + Dictionary: 是无序的键值对的集,分配常量得到不可变字典，分配变量得到可变字典
 
+基本用法
+
+```
+private func dictBasicUse() {
+var fruitPriceDict = [String: Int]()  // 建立个空字典
+fruitPriceDict = ["apple":10, "pear":9, "banana":8, "peach":11, "strawberry":30, "lemon":1]
+var personDict = ["name":"LiLei", "age":18, "nickName":"XiaoLi", "score":100] as [String : Any]  // 声明一个字典
+personDict["city"] = "BeiJing" //添加或修改key值
+personDict.removeValue(forKey: "score")  // 删除"score"key值
+personDict["nickName"] = nil  //同样可以删除"nickName"key值
+personDict.updateValue("city", forKey: "BeiJing China")
+let keysArray = personDict.keys  //访问字典的key集合
+let valueArray = personDict.values //访问字典的values集合
+print("\(keysArray)  \(valueArray)")
+//遍历字典
+for (key, value) in personDict {
+    print("\(key):\(value)");
+}
+for keyAndValue in personDict {
+    print("keyAndValue: \(keyAndValue)")
+    // keyAndValue: (key: "name", value: "LiLei")
+    // keyAndValue: (key: "age", value: 18)
+    // keyAndValue: (key: "city", value: "BeiJing")
+}
+//只遍历字典的键（key）
+for key in personDict.keys {
+    print("\(key)");
+}
+//只遍历字典的值（value）
+for value in personDict.values {
+    print("\(value)");
+}
+/**
+注意：这里的keys和values返回的类型为LazyMapCollection，它与集合类型类似，不能通过下标访问元素，一般通过for-in循环迭代访问；变量字典还能通过调用下标方式来新增一个键值对或修改一个键对应的值。
+*/
+//过滤字典元素
+let fruitPriceDict2 = fruitPriceDict.filter { $0.value < 10 }
+print("\(fruitPriceDict2)")
+// ["lemon": 1, "banana": 8, "pear": 9]
+// 合并
+var dict1 = ["name":"000","age":18,"title":"888"] as [String : Any]
+let dict2 = ["name":"da","hegiht":190] as [String : Any]
+
+for e in dict2 {
+    dict1[e.key] = dict2[e.key]
+}
+//如果key存在会修改，key不存在会新增
+print(dict1)
+//["name": "da", "hegiht": 190, "age": 18, "title": "888"]
+}
+```
+
+另类创建字典的方式
+
+```
+private func createDictSomeMethod() {
+// 通过元组创建字典
+let tupleKeyValueArray = [("Monday", 30),  ("Tuesday", 25),  ("Wednesday", 27)]
+let dictFromTuple = Dictionary(uniqueKeysWithValues: tupleKeyValueArray)
+print(dictFromTuple)
+//["Monday": 30, "Wednesday": 27, "Tuesday": 25]
+// 通过键值序列创建字典
+let keyArrayToDict = ["Apple", "Pear"]
+let valueArrayToDict = [7, 6]
+let keyValueArrayToDict = Dictionary(uniqueKeysWithValues: zip(keyArrayToDict, valueArrayToDict))
+print(keyValueArrayToDict)
+//["Apple": 7, "Pear": 6]
+// 用键序列/值序列创建字典
+let arrayKeyOrValue = ["Monday", "Tuesday", "Wednesday"]
+let indexKeyDict = Dictionary(uniqueKeysWithValues: zip(1..., arrayKeyOrValue))
+let indexValueDict = Dictionary(uniqueKeysWithValues: zip(arrayKeyOrValue, 1...))
+print("\(indexKeyDict) \(indexValueDict)")
+// [1: "Monday", 2: "Tuesday", 3: "Wednesday"] ["Wednesday": 3, "Monday": 1, "Tuesday": 2]
+// 数组分组成字典（比如下面生成一个以首字母分组的字典）
+let nameGroupArray = ["LiLei", "LiXiaolong", "LiuDehua", "HanMeimei", "HanLei", "SunWukong", "ErLangshen"]
+let dictFromNameGroup = Dictionary(grouping: nameGroupArray) { $0.first! }
+print(dictFromNameGroup)
+//["S": ["SunWukong"], "E": ["ErLangshen"], "L": ["LiLei", "LiXiaolong", "LiuDehua"], "H": ["HanMeimei", "HanLei"]]
+}
+```
+    
+重复键的处理
+    
+```
+private func handleRepeatKeyInDict() {
+// 重复键的处理
+// zip配合速记+可以用来解决重复键的问题（相同的键值相加）
+let array = ["Apple", "Pear", "Pear", "Orange"]
+let dic1 = Dictionary(zip(array, repeatElement(1, count: array.count)), uniquingKeysWith: +)
+print(dic1)
+// ["Apple": 1, "Pear": 2, "Orange": 1]
+
+// 下面使用元组创建字典时，遇到相同的键则取较小的那个值
+let duplicatesArray = [("Monday", 30),  ("Tuesday", 25),  ("Wednesday", 27), ("Monday", 28)]
+let dic2 = Dictionary(duplicatesArray, uniquingKeysWith: min)
+print(dic2)
+// ["Wednesday": 27, "Tuesday": 25, "Monday": 28]
+}
+```
+    
+字典合并
+
++ merge(_: uniquingKeysWith:)：这种方法会修改原始Dictionary
++ merging(_: uniquingKeysWith:)：这种方法会创建并返回一个全新的Dictionary
+    
+```
+private func dictMerge() {
+var dic = ["one": 10, "two": 20]
+
+//merge方法合并
+let tuples = [("one", 5),  ("three", 30)]
+dic.merge(tuples, uniquingKeysWith: min)
+print("dic：\(dic)")
+//dic：["three": 30, "two": 20, "one": 5]
+
+//merging方法合并
+let dic2 = ["one": 0, "four": 40]
+let dic3 = dic.merging(dic2, uniquingKeysWith: min)
+print("dic3：\(dic3)") 
+// dic3：["two": 20, "three": 30, "four": 40, "one": 0]
+}
+```
+
+默认值以及妙用用来统计字符串中每个单词出现个数
+
+```
+private func defaultValue() {
+// swift4之前自己判断并赋值
+let dic1 = ["apple": 1, "banana": 2]
+var orange1:Int
+if let value1 = dic1["orange"] {
+    orange1 = value1
+}else{
+    orange1 = 0
+}
+print(orange1)
+// swift4之后  给定即可
+let dic2 = ["apple": 1, "banana": 2 ]
+let orange2 = dic2["orange", default:0]
+print(orange2)
+    }
+    // 下面是统计一个字符串中所有单词出现的次数。可以看到了有了默认值，实现起来会简单许多
+    private func characterCountInStr() {
+let str = "apple banana orange apple banana"
+var wordsCount: [String: Int] = [:]
+for word in str.split(separator: " ") {
+    wordsCount["\(word)", default: 0] += 1
+}
+print(wordsCount)
+// ["apple": 2, "banana": 2, "orange": 1]
+    }
+```
+
 # 集合
 
 + Set: 是无序无重复数据的集,分配常量得到不可变集合，分配变量得到可变集合
+
+一个集合也能存放多个相同类型的元素，与数组不同的是：
+1:一个集合不允许出现两个相同的元素
+2:集合中的元素是无序的
+3:并不是所有的类型对象都能作为集合的元素，不过swift的基本类型都可以
+
+```
+一个集合的完整类型为：Set<Element: Hashable>，集合没有精简表示法。
+我们可以使用集合的构造方法创建一个空集合，也可以使用数组字面量构建一个集合
+eg:
+      // 我们通过集合的构造方法来构造一个空的集合变量setA，
+      // setA集合对象的每个元素都是Int类型对象
+      var setA = Set<Int>()”
+
+      // 我们这里还可以通过集合的不定参数个数的构造方法来创建一个含有指定元素     的集合
+      setA = Set<Int>(arrayLiteral: 1, 2, 3, 4)”
+ 
+      // 这里我们通过数组字面量来创建一个集合常量setB，
+      // 这里需要对setB显式指定类型
+      let setB: Set<Float> = [1.0, 0.5, 2.0]
+ 
+      // 我们也可以用空的数组字面量来构造一个空的集合
+      setA = []”
+```
+元素集合的访问不能像数组通过索引值，因为它是无序的，可以通过for-in循环，也可以通过flatMap方法，有选择性的将集合元素取出。
 
 # 结构体
 
 + struct
 
+```
+//创建一个结构体
+struct BookInfo{
+    var ID:Int = 0
+    var Name:String = "Defaut"
+    var Author:String = "Defaut"
+}
+ 
+var book1:BookInfo //默认构造器创建结构体实例
+var book2 = BookInfo(ID:0021,Name:"航歌",Author:"hangge")  //调用逐一构造器创建实例
+book2.ID = 1234  //修改内部值
+```
+
 # 枚举
 
 + enum
 
+```
+enum CompassPoint {
+    case north
+    case south
+    case east
+    case west
+}
+var directionToHead = CompassPoint.west
+ 
+enum Planet: Int {
+    case mercury = 1
+    case venus = 2
+    case earth = 3
+}
+let earthsOrder = Planet.earth.rawValue //rawValue来获取他的原始值:3
+let possiblePlanet = Planet(rawValue: 2)  //通过原始值来寻找所对应的枚举成员:Venus
+ 
+enum Direction {
+    case up
+    case down
+     
+    func description() -> String{
+        switch(self){
+        case .up:
+            return "向上"
+        case .down:
+            return "向下"
+        }
+    }
+}
+print(Direction.up.description())
+```
+
+用struct 遵循 OptionSet 协议 表示位移枚举(OC中NS_OPTIONS)
+
+```
+// OC中
+typedef NS_OPTIONS(NSUInteger, DirectionType) {
+        DirectionTypeUp      = 1 << 0,
+        DirectionTypeLeft    = 1 << 1,
+        DirectionTypeDown    = 1 << 2,
+        DirectionTypeRight   = 1 << 3,
+    };
+    
+Swift中目前没提供直接的位移枚举，但可以使用结构体(struct) 并结构体要遵从 OptionSet协议,以引入选项集合,而不是用枚举(enum)要表示
+
+struct directionType: OptionSet {
+    let rawValue: Int
+    static let all = directionType(rawValue: 1)
+    static let top = directionType(rawValue: 2)
+    static let right = directionType(rawValue: 4)
+    static let down = directionType(rawValue: 8)
+    static let left = directionType(rawValue: 16)
+}
+
+
+let  direction: directionType = [.top, .right, .down]
+direction.contains(.top)  // → true
+direction.contains(.left)   // → false
+
+1.添加多个枚举值条件Swift 不再是用| 而是用[.xxx,.xxx] 类似于数组的方式 添加多个枚举值条件
+2.判断 位移枚举的变量是否存在 Swift 不再是用& 而是用.contains()
+```
+
 # 可选类型
 
-+ Optional: 用来处理值可能缺失的情况,表示有值或没有值。
++ Optional: 用来处理值可能缺失的情况,表示有值或没有值 [.](https://www.jianshu.com/p/31cf5b81ad6d)
 
 # 元组
 
