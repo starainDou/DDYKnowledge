@@ -19,10 +19,14 @@ Swift 包含了 Objective-C 上所有基本数据类型，另外还增加了高�
 用例
 	
 ```
-let age = 18
-var count = 10086
-count = 1008611
-print("\(age) \(count)") 
+/// 整型用例 Int and UInt
+    public class func testBasic() {
+        let age: UInt = 18
+        var count: Int = 10086
+        count = 1008611
+        print("\(age)") // 18
+        print("\(count)") // 1008611
+    }
 ```
 
 # 浮点型
@@ -33,10 +37,14 @@ print("\(age) \(count)")
 用例
 	
 ```
-let score = 99.5
-var velocity = 10.333333333
-velocity = 20.666666666
-print("\(score) \(velocity)") 
+/// 浮点型用例 Float and Double
+    public class func testBasic() {
+        let score: Float = 99.5
+        var velocity: Double = 10.333333333
+        velocity = 20.666666666
+        print("\(score)") // 99.5
+        print("\(velocity)") // 20.666666666
+    }
 ```
 
 # 布尔型
@@ -46,11 +54,14 @@ print("\(score) \(velocity)")
 用例
 
 ```
-var isSelected = false
-isSelected = true
-if isSelected {
-	print("true")
-}
+/// 布尔型用例 Bool
+    public class func testBasic() {
+        var isSelected: Bool = false
+        isSelected = true
+        if isSelected {
+            print("true") // true
+        }
+    }
 ```
 
 # 字符型
@@ -68,83 +79,140 @@ print("\(firstChar)")
 
 + String: 是字符的序列集合
 
+Swift 中 String 与 OC 中 NSString对比：<br> 
+String 是一个结构体，性能更高 <br>
+NSString 是一个 OC 对象，性能略差 <br>
+String 支持直接遍历 <br>
+
 用例
 
 ```
-var city = "BeiJing"
-let message = "Welcome to \(city)"
-city = "ShangHai"
-print("city:\(city) message:\(message)")
-//city:ShangHai message:Welcome to BeiJing
+/// 字符串用例
+    public class func testBasic() {
+        var city = "BeiJing"
+        // 用\(str) 方式包裹变量常量
+        let message = "Welcome to \(city)"
+        // 更改city为"ShangHai"但message中仍为"BeiJing"
+        city = "ShangHai"
+        // 大写
+        let changeStr1 = city.uppercased()
+        // 小写
+        let changeStr2 = city.lowercased()
+        // 首字母大写
+        let changeStr3 = city.capitalized
+        // 判断是否空字符串
+        if message.isEmpty == false {
+            // message.count得到字符数量
+            print("\(message.count)") // 18
+            print("\(city)") // ShangHai
+            print(message) // Welcome to BeiJing
+            print(changeStr1) // SHANGHAI
+            print(changeStr2) // shanghai
+            print(changeStr3) // Shanghai
+        }
+    }
 ```
-
-判断是否为空 str.isEmpty <br>
-获取字符数量 str.count <br>
-判断特定前缀/后缀 str.hasPrefix/str.hasSuffix <br>
-大写/小写/首字母大写 str.uppercased()/str.lowercased()/str.capitalized <br>
 
 截取字符串
 
 ```
-let message = "Welcome to BeiJing"
-let prefixStr = message.prefix(3) // 截取前三个字符
-let suffixStr = message.suffix(3) // 截取后三个字符
-print("\(prefixStr) \(suffixStr)")
-
-let indexStart = message.index(message.startIndex, offsetBy: 3)
-let indexEnd = message.index(message.startIndex, offsetBy: 6)
-let midStr = message[indexStart..<indexEnd] // 截取
-print("\(indexStart) \(midStr)")
+/// 取子字符串
+    public class func testSubString() {
+        let message = "Welcome to BeiJing"
+        // 取前三个字符
+        let prefixStr = message.prefix(3) // Wel
+        // 取后三个字符
+        let suffixStr = message.suffix(3) // ing
+        // 取限定范围[3..<6]内字符
+        let indexStart = message.index(message.startIndex, offsetBy: 3)
+        let indexEnd = message.index(message.startIndex, offsetBy: 6)
+        let midStr = message[indexStart..<indexEnd] // com
+        // Wel ing com
+        print("\(prefixStr) \(suffixStr) \(midStr)")
+    }
 ```
 
 # 数组
 
 + Array: 是有序数据的集,分配常量得到不可变数组，分配变量得到可变数组
 
-```
-// 一个数组的完成类型为：Array<ElementType>。这里的Element表示存放到该数组中元素的类型，还有一种精简的表示法：Array[ElementType]。
-// 声明一个存放整型元素的数组对象array，并对它创建一个空数组
-var array1 = Array<Int>()
-var array2 = [Int]()
-// 声明一个Double类型常量数组，创建10个元素，每个元素都是2.0
-let array3 = [Double](repeating: 2.0, count: 10)
-// 不过我们更常用的是直接使用数组的字面量[1，2，3，4，5],这样数组的类型为Int。
-// 声明一个有4个元素的Double类型数组
-let array4 = [1.0, 2.0, 3.0, 4.0]
-// 声明一个有3个元素的String类型数组
-var array5 = ["none","warning","error"]
+Swift数组与OC数组区别： <br>
+Array是一个结构体，而不是一个类 <br>
+可以放普通类型 <br>
 
-var types = ["none","warning","error"]
-var menbers = [String]() //声明一个空数组
-menbers.append("six")  //添加元素
-menbers += ["seven"] //添加元素
-menbers.insert("one", at:0)  //指定位置添加元素
-menbers[0] = "message"  //通过下标修改数组中的数据
-menbers[0...2] = ["message","hangge","com"]  //通过小标区间替换数据（前3个数据）
-menbers.count  //获取数组元素个数
-menbers.isEmpty  //判断数组是否为空
-// 交换元素位置（第2个和第3个元素位置进行交换）
-menbers.swapAt(1, 2)
-menbers.remove(at: 2)  //删除下标为2的数组
-menbers.removeLast()  //删除最后一个元素
-menbers.removeAll(keepingCapacity: true)  //删除数组中所有元素
-let addStringArr = types + menbers // 数组组合(+号)
-// 使用for in 实现数组遍历
-for value in menbers{
-    print("\(value)");
-}
-// 通过enumerate函数同时遍历数组的所有索引与数据
-for (index,value) in menbers.enumerated() {
-    print("索引：\(index) 数据：\(value)");
-}
-// 过滤数组元素
-let newTypes = types.filter { $0.count < 6 } //["none", "error"]
-// 创建包含100个元素的数组 ["条目0", "条目1" ... "条目5"]
-let intArray1 = Array(0..<6).map{ "条目\($0)"}
-let intArray2 = [Int](1...10) // 创建1-10连续整数数组
-let intArray3 = [Int](1..<11)// 创建1-10连续整数数组
-print("\(newTypes) \(intArray1) \(intArray2) \(intArray3)")
-// ["none", "error"] ["条目0", "条目1", "条目2", "条目3", "条目4", "条目5"] [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+用例
+
+```
+public class func testBasic() {
+        // 一个数组的完成类型为：Array<ElementType>。ElementType表示数组中元素的类型
+        let array1 = Array<Int>()
+        // 一种精简的表示法：Array[ElementType]
+        let array2 = [Int]()
+        // 声明一个Double类型常量数组，创建10个元素，每个元素都是2.0
+        let array3 = [Double](repeating: 2.0, count: 10)
+        // 字面量方式声明一个有4个元素的Int类型数组常量
+        let array4 = [1, 2, 3, 4]
+        // 声明一个有2个元素的 Any 类型数组常量
+        let array5 = [1, "two", true, 1.1] as [Any]
+        print("\(array1) \(array2) \(array3) \(array4) \(array5)")
+    }
+```
+
+基本操作
+
+```
+public class func testHandle() {
+        // 声明一个空数组变量（let声明为常量, var声明变量，即可变数组）
+        var testArray = [String]()
+        // 追加元素 姿势1
+        testArray.append("six")
+        // 追加元素 姿势2
+        testArray += ["seven"]
+        // 指定位置添加元素
+        testArray.insert("one", at:0)
+        // 通过下标修改数组中的数据
+        testArray[0] = "message"
+        // 通过小标区间替换数据（前3个数据），没有则追加
+        testArray[0...2] = ["message","hangge","com"]
+        // 交换元素位置
+        testArray.swapAt(1, 2)
+        // 删除下标为2的数组
+        testArray.remove(at: 2)
+        // 删除最后一个元素
+        testArray.removeLast()
+        // 删除数组中所有元素 keepingCapacity：保持最大容量
+        testArray.removeAll(keepingCapacity: true)
+        // 数组组合
+        let addStringArr = testArray + ["1", "2"]
+        // 使用for in 实现数组遍历
+        for value in addStringArr {
+            print("\(value)");
+        }
+        // 通过enumerate函数同时遍历数组的所有索引与数据
+        for (index, value) in addStringArr.enumerated() {
+            print("index：\(index) data：\(value)");
+        }
+        // 过滤数组元素(元素长度小于6)
+        let newTypes = addStringArr.filter { $0.count < 6 }
+        // 创建包含100个元素的数组 ["条目0", "条目1" ... "条目5"]
+        let intArray1 = Array(0..<6).map{ "条目\($0)"}
+        // 创建1-10连续整数数组 姿势1 闭区间
+        let intArray2 = [Int](1...10)
+        // 创建1-10连续整数数组 姿势2 半闭半开区间
+        let intArray3 = [Int](1..<11)
+        // 获取数组元素个数
+        let testArrayCount = testArray.count
+        // 判断数组是否为空
+        if testArray.isEmpty == false {
+            print("\(testArray)")
+            print("\(testArrayCount)")
+            print("\(addStringArr)")
+            print("\(newTypes)")
+            print("\(intArray1)")
+            print("\(intArray2)")
+            print("\(intArray3)")
+        }
+    }
 ```
 
 注意：数组字面量(例如:[1,2,3])，本身是一个常量，如果我们对数组字面量进行添加等操作，则会引起编译器报错。
@@ -153,156 +221,167 @@ print("\(newTypes) \(intArray1) \(intArray2) \(intArray3)")
 
 + Dictionary: 是无序的键值对的集,分配常量得到不可变字典，分配变量得到可变字典
 
-基本用法
+字典是由键值 key:value 对组成的集合 <br>
+字典中的元素之间是无序的 <br>
+字典是由两部分集合构成的，一个是键集合，一个是值集合 <br>
+字典是通过访问键间接访问值的 <br>
+键集合是不能有重复元素的，而值集合是可以重复的 <br>
+Swift中的字典类型是Dictionary，也是一个泛型集合 <br>
+使用let修饰的字典是不可变字典 <br>
+使用var修饰的字典是可变字典 <br>
+
+用例
 
 ```
-private func dictBasicUse() {
-var fruitPriceDict = [String: Int]()  // 建立个空字典
-fruitPriceDict = ["apple":10, "pear":9, "banana":8, "peach":11, "strawberry":30, "lemon":1]
-var personDict = ["name":"LiLei", "age":18, "nickName":"XiaoLi", "score":100] as [String : Any]  // 声明一个字典
-personDict["city"] = "BeiJing" //添加或修改key值
-personDict.removeValue(forKey: "score")  // 删除"score"key值
-personDict["nickName"] = nil  //同样可以删除"nickName"key值
-personDict.updateValue("city", forKey: "BeiJing China")
-let keysArray = personDict.keys  //访问字典的key集合
-let valueArray = personDict.values //访问字典的values集合
-print("\(keysArray)  \(valueArray)")
-//遍历字典
-for (key, value) in personDict {
-    print("\(key):\(value)");
-}
-for keyAndValue in personDict {
-    print("keyAndValue: \(keyAndValue)")
-    // keyAndValue: (key: "name", value: "LiLei")
-    // keyAndValue: (key: "age", value: 18)
-    // keyAndValue: (key: "city", value: "BeiJing")
-}
-//只遍历字典的键（key）
-for key in personDict.keys {
-    print("\(key)");
-}
-//只遍历字典的值（value）
-for value in personDict.values {
-    print("\(value)");
-}
-/**
-注意：这里的keys和values返回的类型为LazyMapCollection，它与集合类型类似，不能通过下标访问元素，一般通过for-in循环迭代访问；变量字典还能通过调用下标方式来新增一个键值对或修改一个键对应的值。
-*/
-//过滤字典元素
-let fruitPriceDict2 = fruitPriceDict.filter { $0.value < 10 }
-print("\(fruitPriceDict2)")
-// ["lemon": 1, "banana": 8, "pear": 9]
-// 合并
-var dict1 = ["name":"000","age":18,"title":"888"] as [String : Any]
-let dict2 = ["name":"da","hegiht":190] as [String : Any]
-
-for e in dict2 {
-    dict1[e.key] = dict2[e.key]
-}
-//如果key存在会修改，key不存在会新增
-print(dict1)
-//["name": "da", "hegiht": 190, "age": 18, "title": "888"]
-}
+public class func testBasic() {
+        // 建立个空字典变量（let声明为常量, var声明变量，即可变字典）
+        var fruitPriceDict = [String: Int]()
+        fruitPriceDict = ["apple":10, "pear":9, "banana":8, "peach":11, "strawberry":30, "lemon":1]
+        // 声明一个字典变量，其key为String类型 value为Any类型
+        var personDict = ["name":"LiLei", "age":18, "nickName":"XiaoLi", "score":100] as [String : Any]
+        // 修改key对应value值（不存在则添加）姿势1
+        personDict.updateValue("city", forKey: "BeiJing China")
+        // 修改key对应value值（不存在则添加）姿势2
+        personDict["city"] = "BeiJing"
+        // 删除key值及对应value值 姿势1
+        personDict.removeValue(forKey: "score")
+        // 删除key值及对应value值 姿势2
+        personDict["nickName"] = nil
+        // 访问字典的key集合
+        let keysSet = personDict.keys
+        // 访问字典的values数组
+        let valueArray = personDict.values
+        print("\(keysSet)  \(valueArray)")
+    }
 ```
 
-另类创建字典的方式
+遍历字典
 
 ```
-private func createDictSomeMethod() {
-// 通过元组创建字典
-let tupleKeyValueArray = [("Monday", 30),  ("Tuesday", 25),  ("Wednesday", 27)]
-let dictFromTuple = Dictionary(uniqueKeysWithValues: tupleKeyValueArray)
-print(dictFromTuple)
-//["Monday": 30, "Wednesday": 27, "Tuesday": 25]
-// 通过键值序列创建字典
-let keyArrayToDict = ["Apple", "Pear"]
-let valueArrayToDict = [7, 6]
-let keyValueArrayToDict = Dictionary(uniqueKeysWithValues: zip(keyArrayToDict, valueArrayToDict))
-print(keyValueArrayToDict)
-//["Apple": 7, "Pear": 6]
-// 用键序列/值序列创建字典
-let arrayKeyOrValue = ["Monday", "Tuesday", "Wednesday"]
-let indexKeyDict = Dictionary(uniqueKeysWithValues: zip(1..., arrayKeyOrValue))
-let indexValueDict = Dictionary(uniqueKeysWithValues: zip(arrayKeyOrValue, 1...))
-print("\(indexKeyDict) \(indexValueDict)")
-// [1: "Monday", 2: "Tuesday", 3: "Wednesday"] ["Wednesday": 3, "Monday": 1, "Tuesday": 2]
-// 数组分组成字典（比如下面生成一个以首字母分组的字典）
-let nameGroupArray = ["LiLei", "LiXiaolong", "LiuDehua", "HanMeimei", "HanLei", "SunWukong", "ErLangshen"]
-let dictFromNameGroup = Dictionary(grouping: nameGroupArray) { $0.first! }
-print(dictFromNameGroup)
-//["S": ["SunWukong"], "E": ["ErLangshen"], "L": ["LiLei", "LiXiaolong", "LiuDehua"], "H": ["HanMeimei", "HanLei"]]
-}
+public class func testEnumerated() {
+        var personDict = ["name":"LiLei", "age":18, "nickName":"XiaoLi", "score":100] as [String : Any]
+        // 遍历字典 姿势1
+        for (key, value) in personDict {
+            print("\(key):\(value)");
+        }
+        // 遍历字典 姿势2
+        for keyAndValue in personDict {
+            print("keyAndValue: \(keyAndValue)")
+        }
+        // 只遍历字典的键（key）
+        for key in personDict.keys {
+            print("\(key)");
+        }
+        // 只遍历字典的值（value）
+        for value in personDict.values {
+            print("\(value)");
+        }
+    }
 ```
     
-重复键的处理
+过滤和合并
     
 ```
-private func handleRepeatKeyInDict() {
-// 重复键的处理
-// zip配合速记+可以用来解决重复键的问题（相同的键值相加）
-let array = ["Apple", "Pear", "Pear", "Orange"]
-let dic1 = Dictionary(zip(array, repeatElement(1, count: array.count)), uniquingKeysWith: +)
-print(dic1)
-// ["Apple": 1, "Pear": 2, "Orange": 1]
+ public class func testFilterAndMerge() {
+        // 建立个空字典变量（let声明为常量, var声明变量，即可变字典）
+        let fruitPriceDict = ["apple":10, "pear":9, "banana":8, "peach":11, "strawberry":30, "lemon":1]
+        // 过滤字典元素
+        let fruitPriceDict2 = fruitPriceDict.filter { $0.value < 10 }
+        print("\(fruitPriceDict2)")
+        // 合并 姿势1
+        var dict1 = ["name":"000","age":18,"title":"888"] as [String : Any]
+        let dict2 = ["name":"da","hegiht":190] as [String : Any]
 
-// 下面使用元组创建字典时，遇到相同的键则取较小的那个值
-let duplicatesArray = [("Monday", 30),  ("Tuesday", 25),  ("Wednesday", 27), ("Monday", 28)]
-let dic2 = Dictionary(duplicatesArray, uniquingKeysWith: min)
-print(dic2)
-// ["Wednesday": 27, "Tuesday": 25, "Monday": 28]
-}
+        for e in dict2 {
+            dict1[e.key] = dict2[e.key]
+        }
+        // 如果key存在会修改，key不存在会新增
+        print(dict1)
+        var dic = ["one": 10, "two": 20]
+        // merge方法合并
+        let tuples = [("one", 5),  ("three", 30)]
+        dic.merge(tuples, uniquingKeysWith: min)
+        print("dic：\(dic)")
+        // merging方法合并
+        let dic2 = ["one": 0, "four": 40]
+        let dic3 = dic.merging(dic2, uniquingKeysWith: min)
+        print("dic3：\(dic3)")
+    }
 ```
     
 字典合并
 
 + merge(_: uniquingKeysWith:)：这种方法会修改原始Dictionary
 + merging(_: uniquingKeysWith:)：这种方法会创建并返回一个全新的Dictionary
+   
+另类创建方式   
     
 ```
-private func dictMerge() {
-var dic = ["one": 10, "two": 20]
+public class func testCreateDictSomeMethod() {
+        // 通过元组创建字典
+        let tupleKeyValueArray = [("Monday", 30),  ("Tuesday", 25),  ("Wednesday", 27)]
+        let dictFromTuple = Dictionary(uniqueKeysWithValues: tupleKeyValueArray)
+        print(dictFromTuple) // ["Monday": 30, "Tuesday": 25, "Wednesday": 27]
+        // 通过键值序列创建字典
+        let keyArrayToDict = ["Apple", "Pear"]
+        let valueArrayToDict = [7, 6]
+        let keyValueArrayToDict = Dictionary(uniqueKeysWithValues: zip(keyArrayToDict, valueArrayToDict))
+        print(keyValueArrayToDict)
+        // 用键序列/值序列创建字典
+        let arrayKeyOrValue = ["Monday", "Tuesday", "Wednesday"]
+        let indexKeyDict = Dictionary(uniqueKeysWithValues: zip(1..., arrayKeyOrValue))
+        let indexValueDict = Dictionary(uniqueKeysWithValues: zip(arrayKeyOrValue, 1...))
+        print("\(indexKeyDict) \(indexValueDict)")
+        // 数组分组成字典（比如下面生成一个以首字母分组的字典）
+        let nameGroupArray = ["LiLei", "LiXiaolong", "LiuDehua", "HanMeimei", "HanLei", "SunWukong", "ErLangshen"]
+        let dictFromNameGroup = Dictionary(grouping: nameGroupArray) { $0.first! }
+        print(dictFromNameGroup)
+    }
+```
 
-//merge方法合并
-let tuples = [("one", 5),  ("three", 30)]
-dic.merge(tuples, uniquingKeysWith: min)
-print("dic：\(dic)")
-//dic：["three": 30, "two": 20, "one": 5]
+重复键处理
 
-//merging方法合并
-let dic2 = ["one": 0, "four": 40]
-let dic3 = dic.merging(dic2, uniquingKeysWith: min)
-print("dic3：\(dic3)") 
-// dic3：["two": 20, "three": 30, "four": 40, "one": 0]
-}
+```
+public class func testHandleRepeatKey() {
+        // 重复键的处理
+        // zip配合速记+可以用来解决重复键的问题（相同的键值相加）
+        let array = ["Apple", "Pear", "Pear", "Orange"]
+        let dic1 = Dictionary(zip(array, repeatElement(1, count: array.count)), uniquingKeysWith: +)
+        print(dic1)
+
+        // 下面使用元组创建字典时，遇到相同的键则取较小的那个值
+        let duplicatesArray = [("Monday", 30),  ("Tuesday", 25),  ("Wednesday", 27), ("Monday", 28)]
+        let dic2 = Dictionary(duplicatesArray, uniquingKeysWith: min)
+        print(dic2)
+    }
 ```
 
 默认值以及妙用用来统计字符串中每个单词出现个数
 
 ```
-private func defaultValue() {
-// swift4之前自己判断并赋值
-let dic1 = ["apple": 1, "banana": 2]
-var orange1:Int
-if let value1 = dic1["orange"] {
-    orange1 = value1
-}else{
-    orange1 = 0
-}
-print(orange1)
-// swift4之后  给定即可
-let dic2 = ["apple": 1, "banana": 2 ]
-let orange2 = dic2["orange", default:0]
-print(orange2)
+ public class func testDefaultValue() {
+        // swift4之前自己判断并赋值
+        let dic1 = ["apple": 1, "banana": 2]
+        var orange1:Int
+        if let value1 = dic1["orange"] {
+            orange1 = value1
+        }else{
+            orange1 = 0
+        }
+        print(orange1)
+        // swift4之后  给定即可
+        let dic2 = ["apple": 1, "banana": 2 ]
+        let orange2 = dic2["orange", default:0]
+        print(orange2)
     }
     // 下面是统计一个字符串中所有单词出现的次数。可以看到了有了默认值，实现起来会简单许多
-    private func characterCountInStr() {
-let str = "apple banana orange apple banana"
-var wordsCount: [String: Int] = [:]
-for word in str.split(separator: " ") {
-    wordsCount["\(word)", default: 0] += 1
-}
-print(wordsCount)
-// ["apple": 2, "banana": 2, "orange": 1]
+    public class func testCharacterCountInStr() {
+        let str = "apple banana orange apple banana"
+        var wordsCount: [String: Int] = [:]
+        for word in str.split(separator: " ") {
+            wordsCount["\(word)", default: 0] += 1
+        }
+        print(wordsCount)
     }
 ```
 
@@ -310,10 +389,10 @@ print(wordsCount)
 
 + Set: 是无序无重复数据的集,分配常量得到不可变集合，分配变量得到可变集合
 
-一个集合也能存放多个相同类型的元素，与数组不同的是：
-1:一个集合不允许出现两个相同的元素
-2:集合中的元素是无序的
-3:并不是所有的类型对象都能作为集合的元素，不过swift的基本类型都可以
+一个集合也能存放多个相同类型的元素，与数组不同的是： <br>
+1:一个集合不允许出现两个相同的元素 <br>
+2:集合中的元素是无序的 <br>
+3:并不是所有的类型对象都能作为集合的元素，不过swift的基本类型都可以 <br>
 
 ```
 一个集合的完整类型为：Set<Element: Hashable>，集合没有精简表示法。
@@ -426,20 +505,73 @@ direction.contains(.left)   // → false
 
 # 元组
 
-目前Swift中唯一的一种复合类型，他可以将指定有限个数的任何类型一次整理为一个对象，元组中的每一种类型都可以是任何的结构体、枚举或类类型，甚至也可以是一个元组以及空元组。元组中的每个元素我们称为一个“分量”
+目前Swift中唯一的一种复合类型，他可以将指定有限个数的任何类型一次整理为一个对象，元组中的每一种类型都可以是任何的结构体、枚举或类类型，甚至也可以是一个元组以及空元组。元组中的每个元素我们称为一个“分量”,一般以”元素“统称
+
+用例
 
 ```
-// 声明一个元组常量tuple，类型为(Int, Double, Bool)
-let tuple1 = (10, 0.5, false)
-// 访问元组中的第一个元素(索引下标从0开始)
-let subTuple1 = tuple1.0
+/// 元组用例
+    public class func testBasic() {
+        // 给元组元素加标签(不能数字开头)，可通过标签或索引下标来访问元素
+        let tupleTest1 = (gameName:"game", age:18, _:99, 10086, s0090990s:"666")
+        let tupleSub0 = tupleTest1.gameName
+        let tupleSub1 = tupleTest1.0
+        // 声明一个类型为(Int, Double, Bool)的元组常量,通过索引访问元素(索引下标从0开始)
+        let tupleTest2 = (10, 0.5, false)
+        let tupleSub2 = tupleTest2.0
+        print("\(tupleTest1)") // (gameName: "game", age: 18, 99, 10086, s0090990s: "666")
+        print("\(tupleSub0)") // game
+        print("\(tupleSub1)") // game
+        print("\(tupleTest2)") // (10, 0.5, false)
+        print("\(tupleSub2)") // 10
+        // 一旦一个元组的某个元素带上标签，那么该元组类型相应的位置上也必须加上标签
+        // 一个元组中不需要给所有的元素都加上标签，可以加一部分，指定标签的元素
+        // 如果给定标签，我们可以通过标签访问也可以通过索引位置访问
+        // 元组往往用于一个函数返回多个不同类型的对象的场合
+    }
+```
 
-// 我们也可以给元组指定标签，通过访问标签来访问元素
-let tuple2 = (age: 18, money: 0.5, isSelected: false)
-let subTuple2 = tuple2.age
+萃取元素
 
-print("\(subTuple1) \(subTuple2)")
-// 10 18
+```
+/// 元组萃取元素
+    public class func testGetElement() {
+        // 声明一个元组常量tupleTest, 元组也可以看作一个对象
+        let tupleTest = (10, 0.5, true)
+        // 这里同时声明三个常量：a, b, c tupleTest的第一个元素对 a 初始化，b, c同理
+        // let (a, b, c) 不是在声明元组，而是同时声明三个常量，用于萃取一个元组中的值
+        let (a1, b1, c1) = tupleTest
+        // 如果我们不想萃取元组中的某个元素，用_代替
+        let (a2, _, c2) = (5.5, "hello", false)
+        // 因为元组分解这一语法特性，可以通过元组字面量来交换两个对象的值
+        var a3 = 1, b3 = 2
+        // 交换两个对象的值，a3 ＝ 2， b3 ＝ 1
+        (a3, b3) = (b3, a3)
+        // a1:10 b1:0.5 c1:true a2:5.5 c2:false a3:2 b31
+        print("a1:\(a1) b1:\(b1) c1:\(c1) a2:\(a2) c2:\(c2) a3:\(a3) b3\(b3)")
+    }
+```
+
+元组比较
+
+```
+/// 元组比较
+    public class func testCompara() {
+        let tupleCompare1 = (1, 2, 3)
+        let tupleCompare2 = (1, 2, 3)
+        let tupleCompare3 = (6, 9, 3, 4)
+        let tupleCompare4 = (6, 2, 5, 8)
+        let tupleCompare5 = (true, 9, 3, 4)
+        let tupleCompare6 = (false, 2, 5, 8)
+        // 判断元组 t1和t2 是否相等，结果为：t1 == t2? true
+        print("t1 == t2? \(tupleCompare1 == tupleCompare2)")
+        // 判断元组 t3和t4 是否为小于关系，结果为：t3 < t4? false 因为t3的第二个元素大于t4的第二个元素
+        print("t3 < t4? \(tupleCompare3 < tupleCompare4)")
+        // 这里t1和t3比较，会直接报错，因为不属于同一个类型
+        // print("tupleCompare1 = tupleCompare3? \(tupleCompare1 == tupleCompare3)")
+        // 这里的tupleCompare5和tupleCompare6比较也会报错，虽然元组类型一样，因为Bool类型不遵循comparable协议
+        // print("t5 < t6? \(tupleCompare5 < tupleCompare6)")
+    }
 ```
 
 注意: 一旦一个元组的某个元素带上标签，那么该元组类型相应的位置上也必须加上标签，一个元组中不需要给所有的元素都加上标签，可以加一部分，指定标签的元素，我们可以通过索引位置访问也可以通过标签访问; 元组往往用于一个函数返回多个不同类型的对象的场合。
@@ -485,3 +617,57 @@ print("t3 < t4? \(tupleCompare3 < tupleCompare4)")
 // print("t5 < t6? \(tupleCompare5 < tupleCompare6)")
 ```
 
+简单使用
+
+```
+// 写法一:
+let error = (404, "Not Found")
+//下标访问
+print(error.0)
+print(error.1)
+
+// 写法二:
+let error = (errorCode : 404, errorInfo : "Not Found")
+//别名访问
+print(error.errorCode)
+print(error.errorInfo)
+
+// 写法三:
+//定义元组变量接收元素的值
+let (errorCode, errorInfo) = (404, "Not Found")
+print(errorCode)
+print(errorInfo)
+```
+
+Any、AnyObject
+
+Any是一个空协议集合的别名，它表示没有实现任何协议，因此它可以是任何类型，包括类实例与结构体实例。可以表示任何类型，包括函数类型。
+AnyObject是一个成员为空的协议，任何对象都实现了这个协议。可以表示任何类类型的实例。
+
+类型转化符号
+
+is : 使用类型检查操作符 （ is ）来检查一个实例是否属于一个特定的子类。如果实例是该子类类型，类型检查操作符返回 true ，否则返回 false 。
+
+as : 类型转换操作符  <br>
+as 从派生类转换为基类，向上转型（upcasts）
+as!  向下转型（Downcasting）时使用。由于是强制类型转换，如果转换失败会报 runtime 运行错误。
+as? 和 as! 操作符的转换规则完全一样。但 as? 如果转换不成功的时候便会返回一个 nil 对象。成功的话返回可选类型值。由于 as? 在转换失败的时候也不会出现错误，所以对于如果能确保100%会成功的转换则可使用 as!，否则使用 as?
+[.](https://www.cnblogs.com/dukework/p/6553714.html)
+
+Swift是强类型的语言，强类型语言也称为强类型定义语言，是一种总是强制类型定义的语言，要求变量的使用要严格符合定义，所有变量都必须先定义后使用
+Swift中任何一个变量/常量都有明确的类型
+注意:
+
+如果定义一个标识符时有直接进行赋值，那么标识符后面的类型可以省略
+Swift有类型推导，会自动根据后面的赋值来决定前面的标识符的数据类型
+可以通过option+鼠标左键来查看变量的数据类型
+
+* [Swift字符串中Unicode](https://blog.csdn.net/jiuchabaikaishui/article/details/92837988)
+
+* 字面量，指能够直接指出自己的类型并为变量进行赋值的值
+[参考](https://blog.csdn.net/potato512/article/details/52573766)
+[参考](http://www.hangge.com/blog/cache/detail_553.html)
+
+* [学习Swift www.runoob.com](https://www.runoob.com/swift/swift-tutorial.html) 
+* [学习Swift www.hangge.com](http://www.hangge.com/blog/cache/category_72_42.html)
+* [学习Swift www.swift51.com](http://www.swift51.com/swift.html)
