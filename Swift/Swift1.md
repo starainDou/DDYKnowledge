@@ -709,3 +709,8 @@ Swift有类型推导，会自动根据后面的赋值来决定前面的标识符
 * [学习Swift www.runoob.com](https://www.runoob.com/swift/swift-tutorial.html) 
 * [学习Swift www.hangge.com](http://www.hangge.com/blog/cache/category_72_42.html)
 * [学习Swift www.swift51.com](http://www.swift51.com/swift.html)
+
+<br><br><br><br><br>
+
+
+[下一页 Swift2 运算符和流程控制语句](https://github.com/starainDou/DDYKnowledge/blob/master/Swift/Swift2.md)
