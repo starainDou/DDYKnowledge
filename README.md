@@ -13,4 +13,6 @@
 ##### [BuildConfiguration 区分debug和release](https://github.com/starainDou/DDYKnowledge/blob/master/Files/BuildConfiguration.md)
 ##### [MacOSX关闭系统防护SIP](https://github.com/starainDou/DDYKnowledge/blob/master/Files/SIP.md)
 ##### [删除MacOSX系统的ABC输入法](https://github.com/starainDou/DDYKnowledge/blob/master/Files/DeleteSystemABC.md)
-##### [Swift学习](https://github.com/starainDou/DDYKnowledge/blob/master/Swift/Swift1.md)
+##### [Swift1 数据类型、枚举、结构体](https://github.com/starainDou/DDYKnowledge/blob/master/Swift/Swift1.md)     
+##### [Swift2 运算符和流程控制语句](https://github.com/starainDou/DDYKnowledge/blob/master/Swift/Swift2.md)
+
