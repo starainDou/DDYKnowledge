@@ -75,24 +75,247 @@ for c in words.characters {
 ### if... (if...else...)
 
 ```
-let a = 1
-let b = 2
-// 可以不带括号
-if a > b {
-	print("a>b")
-}
-
-if a >= b {
-    print("yes")
-} else {
-    print("no")
-}
-
+public class func testIf() {
+        let a = 1
+        let b = 2
+        // 可以不带括号
+        if a < b {
+            print("a>b")
+        }
+        if #available(iOS 10, macOS 10.12, *) {
+            // Use iOS 10 APIs on iOS, and use macOS 10.12 APIs on macOS
+        } else {
+            // Fall back to earlier iOS and macOS APIs
+        }
+    }
 ```
 
 ### switch
 
 ```
+public class func testSwitch() {
+        // Swift中不需在用break跳出switch。若想用C风格的落入特性，需给case分支插入fallthrough语句
+        let fruit = "apple"
+        switch fruit {
+        case "apple": print("good"); fallthrough // 用分号结束写到同一行
+        case "banana","orange": print("great")
+        default: print("bad")
+        }
+        // case分支还可以进行区间匹配
+        let age = 5
+        switch age {
+        case 0...11: print("少儿")
+        case 12...18: print("少年")
+        default: print("其他")
+        }
+        // case分支同样支持单侧区间匹配
+        let num = -5
+        switch num {
+        case ..<0: print("负数")
+        case 0...: print("正数")
+        default: print("0")
+        }
+        // 使用元组匹配（如：判断属于哪个象限）
+        let point = (2,2)
+        switch point {
+        case (0,0): print("坐标在原点")
+        case (_,0): print("坐标在x轴上")
+        case (0,_): print("坐标在y轴上")
+        default: print("在象限区域")
+        }
+        // case中还可以使用where关键字来做额外的判断条件
+        let height = 1.72
+        switch height{
+        case 1...3 where height == 1.72:  print("case 1")
+        case 1...3 where height == 2: print("case 2")
+        default: print("default")
+        }
+        // 值绑定
+        let anotherPoint = (2, 0)
+        switch anotherPoint {
+        case (let x, 0):
+            print("on the x-axis with an x value of \(x)")
+        case (0, let y):
+            print("on the y-axis with a y value of \(y)")
+        case let (x, y):
+            print("somewhere else at (\(x), \(y))")
+        }
+        // on the x-axis with an x value of 2
+        // 复合案例
+        let someCharacter: Character = "e"
+        switch someCharacter {
+        case "a", "e", "i", "o", "u":
+            print("\(someCharacter) is a vowel")
+        case "b", "c", "d", "f", "g", "h", "j", "k", "l", "m",
+             "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z":
+            print("\(someCharacter) is a consonant")
+        default:
+            print("\(someCharacter) is not a vowel or a consonant")
+        }
+        // e is a vowel
+        // 复合案例 结合 值绑定
+        let stillAnotherPoint = (9, 0)
+        switch stillAnotherPoint {
+        case (let distance, 0), (0, let distance):
+            print("On an axis, \(distance) from the origin")
+        default:
+            print("Not on an axis")
+        }
+        // On an axis, 9 from the origin
+    }
+```
+
+### for
+
+```
+public class func testFor() {
+        // C-style for statement has been removed in Swift 3
+        //for var i=1; i<100; i++ {
+        //  print("\(i)")
+        //}
+        // for-in
+        for chare in "Google" {
+            print(chare)
+        }
+        // forEach
+        (1...10).forEach {
+            print($0)
+        }
+    }
+```
+
+### 控制转移语句
+
+* continue
+
+continue语句告诉循环停止当前循环不再往下执行，进入下次循环。即“完成了当前的循环迭代”而没有离开循环。
+
+```
+public class func testContinue() {
+        let startStr = "www.google.com www.apple.com"
+        var endStr = ""
+        let charactersToRemove: [Character] = ["a", "e", "i", "o", "u", " "]
+        for character in startStr {
+            if charactersToRemove.contains(character) {
+                continue
+            }
+            endStr.append(character)
+        }
+        print(endStr)  // www.ggl.cmwww.ppl.cm
+    }
+```
+
+* break
+
+break语句立即结束整个控制流语句的执行，尽管break在Swift中不需要，但仍可用来中断匹配。
+
+```
+public class func testBreak() {
+        let numberSymbol: Character = "三"
+        var possibleIntegerValue: Int?
+        switch numberSymbol {
+        case "1", "١", "一", "๑":
+            possibleIntegerValue = 1
+        case "2", "٢", "二", "๒":
+            possibleIntegerValue = 2
+        case "3", "٣", "三", "๓":
+            possibleIntegerValue = 3
+        case "4", "٤", "四", "๔":
+            possibleIntegerValue = 4
+        default:
+            break
+        }
+        if let integerValue = possibleIntegerValue {
+            print("The integer value of \(numberSymbol) is \(integerValue).")
+        } else {
+            print("An integer value could not be found for \(numberSymbol).")
+        }
+        // The integer value of 三 is 3.
+    }
+```
+
+* fallthrough
+
+在Swift中，switch语句不会落入每个案例的底部并进入下一个案例。也就是说，switch一旦第一个匹配的案例完成，整个语句就完成了它的执行。相反，C要求break在每个switch案例的末尾插入一个明确的语句，以防止通过。避免默认的下降意味着Swift switch语句比C中的对应语句更简洁和可预测，因此它们避免switch错误地执行多个案例。
+如果需要C样式的直通行为，则可以使用fallthrough关键字逐个选择加入此行为。以下示例fallthrough用于创建数字的文本描述。
+
+* return
+
+用于提前退出，不再执行代码段中代码
+
+```
+public class func testReturn(_ fruit:[String: String]) {
+        guard let price = fruit["price"] else {
+            return
+        }
+        print("price is \(price)")
+    }
+```
+
+* throw
+
+### 守护关键字 guard
+
+其实是if...else...变种，满足guard语句的条件则跳过else向下执行，否则执行else中语句   
+else分支必须转移控制以退出guard语句出现的代码块,如return，break，continue，或throw，也可以调用一个函数或方法不返回，如fatalError()。
+
+```
+public class func testReturn(_ fruit:[String: String]) {
+        guard let price = fruit["price"] else {
+            return
+        }
+        guard let name = fruit["name"] else {
+            fatalError("致命错误:不存在name键值")
+        }
+        print("price is \(price)")
+    }
+```
+
+自定义致命错误fatalError
+
+```
+public class func testFatalError(){
+        // (1) fatal error发生时，defer是不会执行的
+        // (2) catch 不到 fatal error
+        defer {
+            print("defer here") // 不执行
+        }
+        do {
+            try _throwsMyFatalError() // 产生fatal error
+        } catch let err {
+            print("in MyFatalError catch section \(err)") // 这一行进不了
+        }
+    }
+    private class func _throwsMyFatalError() throws {
+        fatalError("my fatal error here!")
+    }
+```
+
+### 标签语句
+
+在Swift中，可以在其他循环和条件语句中嵌套循环和条件语句，以创建复杂的控制流结构。但是，循环和条件语句都可以使用break语句过早地结束执行。因此，有时候明确要求break语句终止的循环或条件语句是有用的。类似地，如果有多个嵌套循环，那么明确该continue语句应该影响哪个循环可能很有用。    
+要实现这些目标，可以使用语句标签标记循环语句或条件语句。使用条件语句，可以使用带标签语句的break语句来结束带标签语句的执行。使用循环语句，可以使用带有标签语句的break、continue语句来结束或继续执行带标签的语句。       
+标签语句通过在语句相同行上关键字前放置标签名来指示，后跟冒号。这是while循环的这种语法的一个例子，然而所有循环和switch语句的原理是相同的：
+
+```
+public class func testLabel() {
+        let finishIndex = 25
+        var currentIndex = 0
+        var diceRoll = 0
+        gameLoop: while currentIndex != finishIndex {
+            diceRoll += 1
+            if diceRoll == 7 { diceRoll = 1 }
+            switch currentIndex + diceRoll {
+            case finishIndex:
+                break gameLoop
+            case let newSquare where newSquare > finishIndex:
+                continue gameLoop
+            default:
+                currentIndex += diceRoll
+            }
+        }
+    }
 ```
 
 
+[extension及fatalError](https://www.cnblogs.com/Jepson1218/p/5277682.html)
