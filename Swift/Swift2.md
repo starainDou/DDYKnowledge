@@ -317,5 +317,48 @@ public class func testLabel() {
     }
 ```
 
+### 运算符重载
+
+让已有的运算符对自定义的类(结构)进行运算或重新定义已有运算符的运算规则，这种机制被称为运算符重载。
+
+* 通过重载加号运算符，使自定义的两个坐标结构体对象实现相加
+
+```
+struct CenterPointer{
+    var x=0, y=0
+}
+ 
+func + (left:CenterPointer, right:CenterPointer) -> CenterPointer{
+    return CenterPointer(x:left.x+right.x, y:left.y+right.y)
+}
+ 
+let pointer1 = CenterPointer(x:2, y:3)
+let pointer2 = CenterPointer(x:4, y:5)
+let pointer3 = pointer1 + pointer2
+```
+
+* 重载判断运算符，实现判断自定义类型是否相等
+
+```
+func == (left:CenterPointer, right:CenterPointer) -> Bool {
+    return (left.x == right.x) && (left.y == right.y)
+}
+ 
+func != (left:CenterPointer, right:CenterPointer) -> Bool {
+    return !(left == right)
+}
+```
+
+* 组合运算符，即将其他运算符和赋值运算符组合在一起，注意把运算符左参数设置成inout类型
+
+```
+func += (left:inout CenterPointer, right:CenterPointer){
+    left = left + right
+}
+ 
+var pointer1 = CenterPointer(x:2, y:3)
+var pointer2 = CenterPointer(x:4, y:5)
+pointer1 += pointer2
+```
 
 [extension及fatalError](https://www.cnblogs.com/Jepson1218/p/5277682.html)
