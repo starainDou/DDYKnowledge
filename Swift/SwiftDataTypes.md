@@ -173,7 +173,7 @@ public class func testHandle() {
         // 通过下标修改数组中的数据
         testArray[0] = "message"
         // 通过小标区间替换数据（前3个数据），没有则追加
-        testArray[0...2] = ["message","hangge","com"]
+        testArray[0...2] = ["message","Apple","com"]
         // 交换元素位置
         testArray.swapAt(1, 2)
         // 删除下标为2的数组
@@ -235,7 +235,7 @@ Swift中的字典类型是Dictionary，也是一个泛型集合 <br>
 ```
 public class func testBasic() {
         // 建立个空字典变量（let声明为常量, var声明变量，即可变字典）
-        var fruitPriceDict = [String: Int]()
+        var fruitPriceDict = [String: Int]() // Dictionary<String, Int>()
         fruitPriceDict = ["apple":10, "pear":9, "banana":8, "peach":11, "strawberry":30, "lemon":1]
         // 声明一个字典变量，其key为String类型 value为Any类型
         var personDict = ["name":"LiLei", "age":18, "nickName":"XiaoLi", "score":100] as [String : Any]
@@ -427,7 +427,7 @@ struct BookInfo{
 }
  
 var book1:BookInfo //默认构造器创建结构体实例
-var book2 = BookInfo(ID:0021,Name:"航歌",Author:"hangge")  //调用逐一构造器创建实例
+var book2 = BookInfo(ID:0021,Name:"苹果",Author:"Apple")  //调用逐一构造器创建实例
 book2.ID = 1234  //修改内部值
 ```
 
@@ -435,68 +435,104 @@ book2.ID = 1234  //修改内部值
 
 + enum
 
+声明
+
 ```
-enum CompassPoint {
-    case north
-    case south
-    case east
-    case west
+// 常规枚举
+enum DDYSeason {
+    case spring
+    case summer
+    case autumn
+    case winter
 }
-var directionToHead = CompassPoint.west
- 
-enum Planet: Int {
-    case mercury = 1
-    case venus = 2
-    case earth = 3
+// 整型枚举
+enum DDYIndex: Int {
+    case first  = 1
+    case second = 2
+    case nine   = 9
 }
-let earthsOrder = Planet.earth.rawValue //rawValue来获取他的原始值:3
-let possiblePlanet = Planet(rawValue: 2)  //通过原始值来寻找所对应的枚举成员:Venus
- 
-enum Direction {
+// 带内部方法的枚举
+enum DDYDirection {
     case up
     case down
-     
+
     func description() -> String{
-        switch(self){
-        case .up:
-            return "向上"
-        case .down:
-            return "向下"
+        switch(self) {
+        case .up: return "向上"
+        case .down: return "向下"
         }
     }
 }
-print(Direction.up.description())
+```
+应用
+
+```
+// 作为参数
+private func testEnum(_ mySeason: DDYSeason) {
+	print("\(mySeason)")
+}
+``` 
+调用   
+
+```
+
+// 给变量(常量)赋值
+var mySeason = DDYSeason.spring
+mySeason = DDYSeason.summer
+// 调用作为参数的方法
+testEnum(DDYSeason.spring)
+testEnum(mySeason)
+testEnum(.winter) // 当明确声明的枚举类型后可以省略类型
+ 
+// rawValue来获取原始值
+let indexValue = DDYIndex.nine.rawValue
+// 由原始值获取枚举成员
+let ddyIndex = DDYIndex(rawValue: 2)
+// 9 Optional(DDYTest.DDYIndex.second)
+print("\(indexValue) \(String(describing: ddyIndex))")
+// 向上
+print("\(DDYDirection.up.description())") 
 ```
 
 用struct 遵循 OptionSet 协议 表示位移枚举(OC中NS_OPTIONS)
 
-```
-// OC中
-typedef NS_OPTIONS(NSUInteger, DirectionType) {
-        DirectionTypeUp      = 1 << 0,
-        DirectionTypeLeft    = 1 << 1,
-        DirectionTypeDown    = 1 << 2,
-        DirectionTypeRight   = 1 << 3,
-    };
-    
-Swift中目前没提供直接的位移枚举，但可以使用结构体(struct) 并结构体要遵从 OptionSet协议,以引入选项集合,而不是用枚举(enum)要表示
+OC中的位移枚举
 
-struct directionType: OptionSet {
+```
+// 声明定义
+typedef NS_OPTIONS(NSInteger, DDYCertificateType) {
+    DDYCertificateIDCard    = 1 << 0, // 身份证
+    DDYCertificateLicense   = 1 << 1, // 营业执照
+};
+// 作为参数
+- (void)refreshWithType:(DDYCertificateType)type {
+	// 判断
+	if (type & DDYCertificateIDCard) {
+	NSLog(@"身份证");
+	}
+}
+// 调用
+[self refreshWithType: DDYCertificateIDCard | DDYCertificateLicense];
+```
+Swift中目前没提供直接的位移枚举   
+但可以使用结构体(struct) 并结构体要遵从 OptionSet协议,以引入选项集合   
+不能直接用枚举(enum)表示
+
+```
+struct DDYCertificateType: OptionSet {
     let rawValue: Int
-    static let all = directionType(rawValue: 1)
-    static let top = directionType(rawValue: 2)
-    static let right = directionType(rawValue: 4)
-    static let down = directionType(rawValue: 8)
-    static let left = directionType(rawValue: 16)
+    static let IDCard   = DDYCertificateType(rawValue: 1)
+    static let License  = DDYCertificateType(rawValue: 2)
+    static let BankCard = DDYCertificateType(rawValue: 4)
+    static let Passport = DDYCertificateType(rawValue: 8)
+    static let VehiclePlate = DDYCertificateType(rawValue: 16)
 }
 
-
-let  direction: directionType = [.top, .right, .down]
-direction.contains(.top)  // → true
-direction.contains(.left)   // → false
-
-1.添加多个枚举值条件Swift 不再是用| 而是用[.xxx,.xxx] 类似于数组的方式 添加多个枚举值条件
-2.判断 位移枚举的变量是否存在 Swift 不再是用& 而是用.contains()
+// 添加多个枚举值条件不再是用| 而是用[.xxx,.xxx] 类似于数组的方式
+let certificateType: DDYCertificateType = [.IDCard, .License, .BankCard]
+// 判断位移枚举的变量是否存在不再是用& 而是用.contains()
+print("\(certificateType.contains(.IDCard))") // true
+print("\(certificateType.contains(.Passport))") // false
 ```
 
 # 可选类型
