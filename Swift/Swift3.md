@@ -181,4 +181,166 @@ deinit {
 
 > ## 闭包
 
+闭包是swift中非常重要的一个知识点,类似于objective-c中的block。   
+闭包的本质是代码块，是函数的升级版，函数是有名称、可复用的代码块，闭包则是比函数更加灵活的匿名代码块。     
+(函数相当于一个特殊的闭包(有名字的闭包)，或者说闭包是一个特殊的函数(带有自动变量的匿名函数))
 
+由上面括号内语句， 可以归纳三种闭包形式：   
+
+* 全局函数：具名函数，但不捕获任何值
+* 嵌套函数：在函数内部嵌套定义具名函数，可捕获包含函数中的值
+* 闭包表达式：匿名函数类型实例，不具名的代码块，轻量级语法，可捕获上下文的值
+
+其中闭包表达式才是我们一般意义上说的闭包
+
+Swift的闭包表达式具有干净，清晰的风格，闭包的优势包括：
+
+* 从上下文中推断参数和返回值类型
+* 单表达式闭包的隐式返回
+* 速记参数名称
+* 尾随闭包语法
+ 
+闭包定义的类型
+
+```
+{ (参数1，参数2... )->返回值类型 in
+     语句块
+}
+```
+
+闭包表达式的几种简化缩写形式：
+
+* 自动类型推断：省略参数类型和返回值类型
+
+```
+rects.sort({ first, second in
+      return first.width*first.length<=second.width*second.length
+})
+```
+
+* 单表达式闭包可以省去return关键字。
+
+```
+rects.sort({ first, second in
+   first.width*first.length<=second.width*second.length
+})
+```
+
+* 使用参数缩略形式$0,$1...省略参数声明和in
+
+```
+rects.sort({ $0.width*$0.length<=$1.width*$1.length
+})
+```
+
+将操作符函数自动推导为函数类型
+
+* 尾随闭包：当闭包表达式为函数最后一个参数，可将其写在括号后。
+
+```
+//尾随闭包，如果只有一个参数，可以把（）去掉
+//rects.sort()，如果有闭包参数将闭包参数放在最后
+rects.sort {
+      first, second in
+      fitst.width*first.length<=second.width*second.length
+}
+```
+
+* 自动闭包：不接受任何参数，直接返回表达式的值。允许延迟计算。
+
+```
+var cities = ["Beijing","Shanghai","New York", "Paris","London"]
+print(cities.count)  //此时的城市数是5
+
+let filter = { cities.removeLast() } //()->String 将闭包赋值给filter，此时还没有执行removeLast()
+
+print(cities.count) //由于上一句并没有执行removeLast()此时的城市数还是5
+
+print("Deleting \(filter())!") //执行了filter的闭包。 显示Deleting London!
+
+print(cities.count) //此时的城市数是4, London被删除掉了
+```
+
+函数类型与闭包的变量捕获    
+函数类型和闭包可以捕获其所在上下文的任何值：    
+* 函数参数    
+* 局部变量    
+* 对象实例属性    
+* 全局变量    
+* 类的类型属性   
+
+```
+//捕获实例属性
+class Rectangle{
+      var width = 0
+      var length = 0
+     
+      func getComputHandler()-> ()->Int {
+          return {
+               return self.width*self.length //这个闭包就捕获了实例属性self.width和self.length
+          }
+      }
+}
+
+//捕获参数或局部变量
+func addHandler(step: Int)-> ()->Int{
+        var sum = 0
+      return{
+          sum +=step  //这里捕获了参数step和局部变量sum 
+          return sum
+      }
+}
+
+let addByTen = addHandler(10)
+
+print(addByTen())  //显示结果 10
+print(addByTen())  //显示结果 20
+print(addByTen())  //显示结果 30
+```
+
+如果捕获值生存周期小于闭包对象（参数和局部变量），系统会将被捕获的值封装在一个临时对象里，然后再闭包对象上创建一个对象指针，指向该临时对象。
+
+临时对象和闭包对象之间是强引用关系，生存周期跟随闭包对象。
+
+起别名
+
+```
+// 光强检测闭包起别名
+typealias DDYQRBrightnessClosure = (_ brightnessValue: Double) -> Void
+
+// 光强检测数据闭包回调
+public var brightnessClosure: DDYQRBrightnessClosure?
+```
+
+使用闭包需要注意内存管理，当闭包为参数时如果以脱离函数则需要声明为逃逸闭包(类型前加@escaping)
+
+```
+/// 相机权限
+///
+/// - Parameter closure: 闭包回调
+public static func cameraAuth(_ closure: @escaping (Bool) -> Void) -> Void {
+    let authStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+    switch authStatus {
+    case .notDetermined:
+    AVCaptureDevice.requestAccess(for: AVMediaType.video) { (granted: Bool) in
+        DispatchQueue.main.async {
+            closure(granted)
+        }
+    }
+        break
+    case .authorized:
+    DispatchQueue.main.async {
+        closure(true)
+        }
+    break
+    default: // case .restricted // case .denied
+        DispatchQueue.main.async {
+        closure(false)
+    }
+        break
+    }
+}
+```
+
+[闭包资料](http://www.cocoachina.com/articles/23496)
+[闭包资料](https://www.runoob.com/swift/swift-closures.html)
