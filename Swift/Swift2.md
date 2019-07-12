@@ -82,12 +82,15 @@ public class func testIf() {
         if a < b {
             print("a>b")
         }
-        if #available(iOS 10, macOS 10.12, *) {
-            // Use iOS 10 APIs on iOS, and use macOS 10.12 APIs on macOS
-        } else {
-            // Fall back to earlier iOS and macOS APIs
-        }
     }
+let settingURL = URL(string: UIApplication.openSettingsURLString)!
+if UIApplication.shared.canOpenURL(settingURL) {
+	if #available(iOS 10, *) {
+		UIApplication.shared.open(settingURL, options: [:], completionHandler: nil)
+	} else {
+		UIApplication.shared.openURL(settingURL)
+	}
+}
 ```
 
 ### switch
