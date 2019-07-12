@@ -138,6 +138,8 @@ String 支持直接遍历
 
 + Array: 是有序数据的集,分配常量得到不可变数组，分配变量得到可变数组
 
+数组使用有序列表存储同一类型的多个值。相同的值可以多次出现在一个数组的不同位置中。
+
 Swift数组与OC数组区别：     
 Array是一个结构体，而不是一个类     
 可以放普通类型     
@@ -146,6 +148,9 @@ Array是一个结构体，而不是一个类
 
 ```
 public class func testBasic() {
+        // var arrayM = [String]()
+        // var arrayM1:[String]
+        // var arrayM2 = Array()
         // 一个数组的完成类型为：Array<ElementType>。ElementType表示数组中元素的类型
         let array1 = Array<Int>()
         // 一种精简的表示法：Array[ElementType]
@@ -415,6 +420,34 @@ eg:
       setA = []”
 ```
 元素集合的访问不能像数组通过索引值，因为它是无序的，可以通过for-in循环，也可以通过flatMap方法，有选择性的将集合元素取出。
+
+集合的数学操作
+
+```
+print(oddD.union(evenD).sorted()) //并集
+print(oddD.intersection(evenD).sorted())//交集
+print(oddD.subtracting(siggleDPrime).sorted())//取差值
+print(oddD.symmetricDifference(siggleDPrime).sorted())//去掉相同值
+```
+
+集合遍历
+
+```
+for item in favorite {
+    print(item)
+}
+//按照首字母的顺序输出
+for item1 in favorite.sorted() {
+    print(item1)
+}
+```
+
+集合成员关系
+
+用 ==来判断两个集合是否包含全部相同的值    
+用 isSubset(of:)来判断一个集合中的值是否也被包含在另外一个集合中    
+用 isSuperset（of:）来判断一个集合中包含另一个集合所有的值   
+用isStrictSubset(of:)或者isStrictSuperset(of:)方法来判断一个集合是否是另外一个集合的子集合或父集合并且两个集合不相等    
 
 #### 结构体
 
