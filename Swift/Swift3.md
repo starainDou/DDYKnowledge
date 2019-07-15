@@ -208,29 +208,61 @@ Swift的闭包表达式具有干净，清晰的风格，闭包的优势包括：
 }
 ```
 
-闭包表达式的几种简化缩写形式：
-
-* 自动类型推断：省略参数类型和返回值类型
+闭包表达式以及简化形式：
 
 ```
-rects.sort({ first, second in
-      return first.width*first.length<=second.width*second.length
-})
-```
+import UIKit
+/// 起别名
+typealias DDYTestClosureTypealias = (String, Bool) -> Void
 
-* 单表达式闭包可以省去return关键字。
+class ClosureTest: NSObject {
 
-```
-rects.sort({ first, second in
-   first.width*first.length<=second.width*second.length
-})
-```
+    public class func testBasic() {
+        testTypealias { (city: String, success: Bool) in
+            print("\(city) \(success)") // Beijing true
+        }
+        testParams()
+    }
 
-* 使用参数缩略形式$0,$1...省略参数声明和in
+    private class func testTypealias(_ closure: DDYTestClosureTypealias) {
+        closure("Beijing", true);
+    }
 
-```
-rects.sort({ $0.width*$0.length<=$1.width*$1.length
-})
+    private class func testParams() {
+        let numbersArray = [1, 3, 5, 9, 7, 2, 8, 6, 0]
+
+        // 参数加类型
+        let sorted1 = numbersArray.sorted { (num1: Int, num2: Int) -> Bool in
+            return num1 > num2 // 降序
+        }
+        // 参数省略类型(编译器推断类型)
+        let sorted2 = numbersArray.sorted { num1, num2 in
+            return num1 < num2 // 升序
+        }
+        // 省略参数名和类型，用$加数字引用每个参数
+        let sorted3 = numbersArray.sorted {
+            return $1 > $0
+        }
+        // 如果闭包只包含一行代码，省略return都可以
+        let sorted4 = numbersArray.sorted {
+            $0 > $1
+        }
+        // 闭包还可以存储在变量中，类似函数一样调用
+        let comparator = {(a: Int, b: Int) in a<b }
+        let result = comparator(1, 2)
+        print("\(sorted1)")
+        print("\(sorted2)")
+        print("\(sorted3)")
+        print("\(sorted4)")
+        print("\(result)")
+        // [9, 8, 7, 6, 5, 3, 2, 1, 0]
+        // [0, 1, 2, 3, 5, 6, 7, 8, 9]
+        // [0, 1, 2, 3, 5, 6, 7, 8, 9]
+        // [9, 8, 7, 6, 5, 3, 2, 1, 0]
+        // true
+    }
+}
+
 ```
 
 将操作符函数自动推导为函数类型
