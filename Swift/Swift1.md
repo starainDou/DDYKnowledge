@@ -549,6 +549,22 @@ case .Sell(let stock,let amount):
 default:
     ()
 }
+
+// 递归枚举
+// 枚举成员的关联值为当前枚举类型时称为递归枚举。indirect修饰整个枚举时,所有成员均可递归(也可不递归)
+indirect enum MyCalculateEnum {
+    case number(Int)
+    case addition(MyCalculateEnum, MyCalculateEnum)
+    case multi(MyCalculateEnum, MyCalculateEnum)
+}
+// 调用
+private class func testIndirectEnum() {
+        let five = MyCalculateEnum.number(5)
+        let four  = MyCalculateEnum.number(4)
+        let sum = MyCalculateEnum.addition(five, four)
+        let product = MyCalculateEnum.multi(sum, MyCalculateEnum.number(2))
+        print("(5+4)*2 = \(product)")
+    }
 ```
 应用
 
