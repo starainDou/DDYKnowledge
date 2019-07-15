@@ -470,6 +470,14 @@ book2.ID = 1234  //修改内部值
 
 + enum
 
+ 与OC只能整型不同，Swift支持更多枚举方案:   
+
+ + 整型
+ + 浮点数
+ + 字符串
+ + 布尔类型
+ + 嵌套枚举
+
 声明
 
 ```
@@ -497,6 +505,38 @@ enum DDYDirection {
         case .down: return "向下"
         }
     }
+}
+// 嵌套枚举
+enum Area {
+    enum DongGuan {
+        case NanCheng
+        case DongCheng
+    }
+    
+    enum GuangZhou {
+        case TianHe
+        case CheBei
+    }
+}
+print(Area.DongGuan.DongCheng)
+
+// 关联值(case 传值)
+enum Trade {
+    case Buy(stock:String,amount:Int)
+    case Sell(stock:String,amount:Int)
+}
+
+let trade = Trade.Buy(stock: "003100", amount: 100)
+
+switch trade {
+case .Buy(let stock,let amount):
+    
+    print("stock:\(stock),amount:\(amount)")
+    
+case .Sell(let stock,let amount):
+    print("stock:\(stock),amount:\(amount)")
+default:
+    ()
 }
 ```
 应用
