@@ -269,12 +269,23 @@ class ClosureTest: NSObject {
 
 * 尾随闭包：当闭包表达式为函数最后一个参数，可将其写在括号后。
 
+尾随闭包用于需要将一个很长的闭包表达式作为最后一个参数传递给函数。也就是说如果按时的最后一个参数是闭包，那么在调用它的时候就可以把这个闭包写在括号外面，并紧跟括号，函数的其他参数则仍然写在括号之中
+
 ```
-//尾随闭包，如果只有一个参数，可以把（）去掉
-//rects.sort()，如果有闭包参数将闭包参数放在最后
-rects.sort {
-      first, second in
-      fitst.width*first.length<=second.width*second.length
+private class func testCloseClosure(paramStr: String, paramClosure: (String) -> Void) {
+    paramClosure("输出"+paramStr)
+}
+private class func testCloseClosurePrint() {
+    // 普通调用
+    testCloseClosure(paramStr: "1 普通调用", paramClosure: { (closureStr) in
+    print(closureStr)
+    })
+    // 尾随闭包
+    testCloseClosure(paramStr: "2 尾随闭包") { (closureStr) in
+    print(closureStr)
+    }
+    // 输出1 普通调用
+    // 输出2 尾随闭包
 }
 ```
 
@@ -346,6 +357,38 @@ public var brightnessClosure: DDYQRBrightnessClosure?
 
 使用闭包需要注意内存管理，当闭包为参数时如果以脱离函数则需要声明为逃逸闭包(类型前加@escaping)
 
+逃逸闭包
+
+当一个闭包作为参数传到一个函数中，但是该闭包要在函数返回之后才被执行，于是就称这样的闭包为逃逸闭包。也就是说闭包逃离了函数的作用域。写法是在这个闭包参数前加一个@escaping用来指明这个闭包是允许逃逸出该函数的。
+
+```
+//定义数组，里面的元素都是闭包类型的
+    var callBackArray : [(Int)->Void] = []
+    //定义一个接收闭包的函数
+    private func testEscapingClosure() {
+        testEscapingClosureChange()
+        print("111: \(closureX)")
+        callBackArray.first?(5)
+        print("222: \(closureX)")
+        let closure = callBackArray.first
+        closure?(6)
+        print("333: \(closureX)")
+    }
+
+    var closureX = 10
+    private func testEscapingClosureChange() {
+        testEscapingClosureCallBack { (closureParam) in
+            self.closureX = self.closureX+closureParam
+        }
+    }
+    private func testEscapingClosureCallBack(callBack:@escaping (Int)-> Void) {
+        callBackArray.append(callBack)
+    }
+```
+
+
+逃逸闭包实际应用
+
 ```
 /// 相机权限
 ///
@@ -373,6 +416,22 @@ public static func cameraAuth(_ closure: @escaping (Bool) -> Void) -> Void {
     }
 }
 ```
+
+解决循环引用的三种方式
+
+```
+// 1、可以使用weak关键字将对象之间的联系变为弱引用
+weak var weakself = self
+
+// 2、第一种方式的简化
+[weak self]
+
+// 3、使用unowned解决
+[unowned self]
+// 但是该方法十分危险，要确保数据一定有值。否则会Crash
+```
+
+
 
 [闭包资料](http://www.cocoachina.com/articles/23496)
 [闭包资料](https://www.runoob.com/swift/swift-closures.html)
