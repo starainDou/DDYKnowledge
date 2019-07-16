@@ -46,17 +46,13 @@ extension DispatchQueue {
 
 ```
 // OC SDWebImage
-#ifndef dispatch_queue_async_safe
-#define dispatch_queue_async_safe(queue, block)\
-    if (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(queue)) {\
+#ifndef dispatch_main_async_safe
+#define dispatch_main_async_safe(block)\
+    if (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(dispatch_get_main_queue())) {\
         block();\
     } else {\
-        dispatch_async(queue, block);\
+        dispatch_async(dispatch_get_main_queue(), block);\
     }
-#endif
-
-#ifndef dispatch_main_async_safe
-#define dispatch_main_async_safe(block) dispatch_queue_async_safe(dispatch_get_main_queue(), block)
 #endif
 ```
 
@@ -83,5 +79,21 @@ extension DispatchQueue {
 
 func ddyMainAsyncSafe(_ execute: @escaping () -> Void) {
     DispatchQueue.isMainQueue ? execute() : DispatchQueue.main.async(execute: execute)
+}
+```
+
+附加一个RxSwift中的判断方式
+
+```
+extension DispatchQueue {
+    private static var token: DispatchSpecificKey<()> = {
+        let key = DispatchSpecificKey<()>()
+        DispatchQueue.main.setSpecific(key: key, value: ())
+        return key
+    }()
+
+    static var isMain: Bool {
+        return DispatchQueue.getSpecific(key: token) != nil
+    }
 }
 ```
