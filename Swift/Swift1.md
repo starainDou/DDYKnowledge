@@ -413,32 +413,32 @@ public class func testHandleRepeatKey() {
 3:并不是所有的类型对象都能作为集合的元素，不过swift的基本类型都可以     
 
 ```
-一个集合的完整类型为：Set<Element: Hashable>，集合没有精简表示法。
-我们可以使用集合的构造方法创建一个空集合，也可以使用数组字面量构建一个集合
-eg:
-      // 我们通过集合的构造方法来构造一个空的集合变量setA，
-      // setA集合对象的每个元素都是Int类型对象
-      var setA = Set<Int>()”
-
-      // 我们这里还可以通过集合的不定参数个数的构造方法来创建一个含有指定元素     的集合
-      setA = Set<Int>(arrayLiteral: 1, 2, 3, 4)”
- 
-      // 这里我们通过数组字面量来创建一个集合常量setB，
-      // 这里需要对setB显式指定类型
-      let setB: Set<Float> = [1.0, 0.5, 2.0]
- 
-      // 我们也可以用空的数组字面量来构造一个空的集合
-      setA = []”
+public class func testInit() {
+	// 一个集合的完整类型为：Set<Element: Hashable>，集合没有精简表示法。
+	var set1 = Set<Int>()
+	// 通过集合的不定参数个数的构造方法来创建一个含有指定元素的集合
+	let set2 = Set<Int>(arrayLiteral: 1, 2, 3, 4)
+	// 通过数组字面量来创建一个集合常量
+	let set3: Set<Float> = [1.0, 0.5, 2.0]
+	// 我们也可以用数组字面量来赋值一个集合
+	set1 = [1, 2]
+	print("\(set1) \(set2) \(set3)")
+}
 ```
+
 元素集合的访问不能像数组通过索引值，因为它是无序的，可以通过for-in循环，也可以通过flatMap方法，有选择性的将集合元素取出。
 
 集合的数学操作
 
 ```
-print(oddD.union(evenD).sorted()) //并集
-print(oddD.intersection(evenD).sorted())//交集
-print(oddD.subtracting(siggleDPrime).sorted())//取差值
-print(oddD.symmetricDifference(siggleDPrime).sorted())//去掉相同值
+public class func testMathCalculation() {
+	let setA: Set<Float> = [1.0, 0.5, 2.0]
+	let setB: Set<Float> = [1.0, 1.5, 2.0]
+	print(setA.union(setB).sorted()) // 并集 [0.5, 1.0, 1.5, 2.0]
+	print(setA.intersection(setB).sorted()) // 交集 [1.0, 2.0]
+	print(setA.subtracting(setB).sorted()) // 取差值 [0.5]
+	print(setA.symmetricDifference(setB).sorted()) // 去掉相同值 [0.5, 1.5]
+}
 ```
 
 集合遍历
