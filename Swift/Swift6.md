@@ -227,6 +227,23 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 	异步线程的执行顺序是不确定的，几乎同步开始执行，2和3 顺序不确定   
 	全局并发队列由系统默认生成，无法调用conQueue.resume()和Queue.suspend()来控制执行继续或中断。
 	
+	附 
+	```
+	// Swift3开始使用了DispatchWorkItem类将任务封装成为对象，由对象进行任务。
+	let item = DispatchWorkItem {
+		// do task
+	}
+	DispatchQueue.global().async(execute: item)
+
+	// 也可以使用DispatchWorkItem实例对象的perform方法执行任务
+	let workItem = DispatchWorkItem {
+		// do task
+	}
+	DispatchQueue.global().async {
+		workItem.perform()
+	}
+	```
+	
 * 自定义队列 (Custom queue)
 
 	1 自定义串行队列同步执行任务(依次执行)
@@ -306,12 +323,12 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 	6 自定义并发队列执行同步任务(顺序执行)
 	
 	```
-	let concurrent = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+	let concurrentQ = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
 	print("执行了 1")
-	concurrent.sync {
+	concurrentQ.sync {
 		print("执行了 2")
 	}
-	concurrent.sync {
+	concurrentQ.sync {
 		print("执行了 3")
 	}
 	print("执行了 4")
@@ -320,11 +337,11 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 	7 自定义并发队列同步任务 嵌套 该自定义并发队列同步任务 (顺序执行 不会死锁)
 	
 	```
-	let concurrent = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+	let concurrentQ = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
 		print("执行了 1")
-		concurrent.sync {
+		concurrentQ.sync {
 			print("执行了 2")
-			concurrent.sync {
+			concurrentQ.sync {
 				print("执行了 3")
 			}
 		}
@@ -334,15 +351,61 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 	8 自定义并发队列执行异步任务（2，3不确定顺序）
 	
 	```
-	let concurrent = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+	let concurrentQ = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
 	print("执行了 1")
-	concurrent.async {
+	concurrentQ.async {
 		print("执行了 2")
 	}
-	concurrent.async {
+	concurrentQ.async {
 		print("执行了 3")
 	}
 	print("执行了 4")
+	```
+	
+	队列便利构造器
+	
+	- label: 队列的唯一标识符(用于调试)
+	- qos: 队列的优先级(.userInteractive .userInitiated .default .utility .background .unspecified)
+		- .userInteractive：用户交互相关，为了好的用户体验，任务需要立马执行。使用该优先级用于UI更新，事件处理和小工作量任务，在主线程执行。
+		- .userInitiated：优先级等同于DISPATCH_QUEUE_PRIORITY_HIGH,需要立刻的结果
+		- .default：默认优先级,优先级等同于DISPATCH_QUEUE_PRIORITY_DEFAULT，建议大多数情况下使用默认优先级
+		- .utility：优先级等同于DISPATCH_QUEUE_PRIORITY_LOW，可以执行很长时间，再通知用户结果。比如：下载一个大文件，网络，计算
+		- .background：最低优先级，等同于DISPATCH_QUEUE_PRIORITY_BACKGROUND. 用户不可见，比如：在后台存储大量数据
+		- .unspecified：未定义
+	- attributes: 队列属性(attributes是一个结构体并遵守OptionSet协议，所以传入的参数可以为[.option1, .option2])
+		- .concurrent并发队列，
+		- .initiallyInactive表明队列需要手动开启。不填写时默认队列串行、自动执行
+	- autoreleaseFrequency:自动释放频率，有些列队会在执行完任务之后自动释放，有些是不会自动释放的，需要手动释放。官方文档是说当设为.workItem时，所有异步任务提交的代码块会被封装成独立的任务，在同步执行的队列则不受影响。
+	- target:目标队列
+	
+	```
+	// 队列的便利构造函数(便利构造器)
+	public convenience init(label: String, qos: DispatchQoS = .unspecified, attributes: DispatchQueue.Attributes = [], autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency = .inherit, target: DispatchQueue? = nil)
+	// 优先级顺序:userInteractive> userInitiated> default> utility> background> unspecified
+	
+	let label = "com.ddy.concurrentQueue"
+	let qos = DispatchQoS.default
+	let attributes = DispatchQueue.Attributes.concurrent
+	let autoreleaseFrequnecy = DispatchQueue.AutoreleaseFrequency.never
+	let queue = DispatchQueue(label: label, qos: qos, attributes: attributes, autoreleaseFrequency: autoreleaseFrequnecy, target: nil)
+	```
+	
+	等待任务结束
+	
+	```
+	let concurrentQ = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+	// 可以在初始化的时候指定更多的参数
+	let workItem = DispatchWorkItem(qos: .default, flags: .barrier) {
+		sleep(5)
+		print("done")
+	}
+	concurrentQ.async(execute: workItem)
+	print("before waiting")
+	workItem.wait()
+	print("after waiting")
+	// before waiting
+	// done
+  	// after waiting
 	```
 
 * 队列组(Group queue)   
@@ -413,3 +476,51 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 		}
 	}
 	```
+	
+	group.wait(timeout: DispatchTime(uptimeNanoseconds: 10*NSEC_PER_SEC)) 来表示等待与超时
+	
+> ## GCD一些常用函数
+
+* asyncAfter 延迟调用
+
+	asyncAfter并不是在指定时间后执行任务处理，而是在指定时间后把任务追加到queue里面。因此会有少许延迟。 
+
+	```
+	DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+2.0) {
+		print("2秒后执行的")
+	}
+	// let delay = DispatchTime.now() + DispatchTimeInterval.seconds(10)
+	let delay = DispatchTime.now() + 10
+	DispatchQueue.main.asyncAfter(deadline: delay) {
+		print("10秒后执行的")
+	} 
+	// 注意:我们不能直接取消我们已经提交到 asyncAfter 里的任务代码。
+	// 如需取消正在等待执行的Block操作，可先将这个Block封装到DispatchWorkItem对象中，然后对其发送cancle，来取消一个正在等待执行的block
+	// 将要执行的操作封装到DispatchWorkItem中
+	let task = DispatchWorkItem { print("3秒后执行被取消") }
+	// 延时2秒执行
+	DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3.0, execute: task)
+	// 取消任务
+	task.cancel()
+	```  
+* 循环执行(快速迭代)     
+
+	OC中GCD的dispatch_apply()，而Swift中用concurrentPerform()
+	
+	```
+	let concurrentQ = DispatchQueue(label: "com.ddy.concurrentQueue", attributes:.concurrent)
+	let array = ["1", "3", "5", "7", "9"];
+	concurrentQ.async {
+		DispatchQueue.concurrentPerform(iterations: array.count) { (index) in
+			print("\(array[index])")
+		}
+	}
+	// 1 9 3 5 7  可以利用多核的优势，所以无序
+	// 简化 迭代五次
+	// DispatchQueue.concurrentPerform(iterations: 5) {
+   	// 		print("\($0)")
+ 	//	}
+	```
+	
+	
+[参考 Swift4 - GCD的使用](https://blog.csdn.net/longshihua/article/details/79756676)
