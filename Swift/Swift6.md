@@ -184,6 +184,232 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 			return DispatchQueue.getSpecific(key: token) != nil
 		}
 	}
-```
+	```
 
-注意：主线程串行队列由系统默认生成，无法调用conQueue.resume()和Queue.suspend()来控制执行继续或中断。
+	注意：主线程串行队列由系统默认生成，无法调用conQueue.resume()和Queue.suspend()来控制执行继续或中断。
+
+* 全局并发队列(Global queue)
+	
+	耗时操作(如网络请求，IO，数据库读写等)在子线程中处理，然后通知主线程更新界面
+	
+	1.全局并发队列同步执行任务，在主线程执行会导致页面卡顿。
+	
+	```
+	print("同步执行任务 1")
+	DispatchQueue.global().sync {
+		print("同步执行任务 2")
+	}
+	print("同步执行任务 3")
+	```
+	2 全局并发队列异步执行任务，会开启新的子线程去执行任务，页面不会卡顿。
+	
+	```
+	print("异步执行任务 1")
+	DispatchQueue.global().async {
+		print("异步执行任务 2")
+	}
+	print("异步执行任务 3")	
+	```
+	
+	3 多个全局并发队列，异步执行任务。
+	
+	```
+	print("全局并发队列 异步执行任务 1")
+	DispatchQueue.global().async {
+		print("全局并发队列 异步执行任务 2")
+	}
+	DispatchQueue.global().async {
+		print("全局并发队列 异步执行任务 3")
+	}
+	print("全局并发队列 异步执行任务 4")
+	```
+	
+	异步线程的执行顺序是不确定的，几乎同步开始执行，2和3 顺序不确定   
+	全局并发队列由系统默认生成，无法调用conQueue.resume()和Queue.suspend()来控制执行继续或中断。
+	
+* 自定义队列 (Custom queue)
+
+	1 自定义串行队列同步执行任务(依次执行)
+	
+	```
+	let serialQueue = DispatchQueue(label: "com.ddy.serialQueue")
+	print("自定义串行队列同步执行任务 1")
+	serialQueue.async {
+		print("自定义串行队列同步执行任务 2")
+	}
+	serialQueue.async {
+		print("自定义串行队列同步执行任务 3")
+	}
+	print("自定义串行队列同步执行任务 4")
+	```
+	
+	2 自定义串行队列同步任务 嵌套 该自定义串行队列同步任务，产生死锁
+	
+	```
+	let serialQueue = DispatchQueue(label: "com.ddy.serialQueue")
+	serialQueue.sync {
+		print("执行了1")
+		serialQueue.sync {
+			print("死锁了不执行")
+		}
+	}
+	print("没执行")
+	```
+	
+	3 自定义串行队列同步任务嵌套并发队列同步任务 不死锁
+	
+	```
+	let serialQueue = DispatchQueue(label: "com.ddy.serialQueue")
+	let globalQueue = DispatchQueue.global()
+	let concurrentQ = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+	serialQueue.sync {
+		print("执行了1")
+		globalQueue.sync {
+			print("执行了2")
+		}
+		concurrentQ.sync {
+			print("执行了3")
+		}
+	}
+	print("执行4")
+	```
+	
+	4 自定义串行队列同步执行任务 嵌套 另一个自定义串行队列同步任务 不死锁
+	
+	```
+	let serialQueue1 = DispatchQueue(label: "com.ddy.serialQueue1")
+	let serialQueue2 = DispatchQueue(label: "com.ddy.serialQueue2")
+	serialQueue1.sync {
+		print("执行了1")
+		serialQueue2.sync {
+			print("执行了2")
+		}
+	}
+	print("执行了3")
+	```
+	
+	5 自定义串行队列异步执行任务 嵌套 该自定义串行队列同步任务，产生死锁
+	
+	```
+	let serialQueue = DispatchQueue(label: "com.ddy.serialQueue")
+	serialQueue.async {
+		print("执行了1")
+		serialQueue.sync {
+			print("死锁了不执行")
+		}
+	}
+	print("执行了3")
+	```
+	总结：遇到嵌套串行队列同步任务要小心 可能 会死锁
+	
+	
+	6 自定义并发队列执行同步任务(顺序执行)
+	
+	```
+	let concurrent = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+	print("执行了 1")
+	concurrent.sync {
+		print("执行了 2")
+	}
+	concurrent.sync {
+		print("执行了 3")
+	}
+	print("执行了 4")
+	```
+	
+	7 自定义并发队列同步任务 嵌套 该自定义并发队列同步任务 (顺序执行 不会死锁)
+	
+	```
+	let concurrent = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+		print("执行了 1")
+		concurrent.sync {
+			print("执行了 2")
+			concurrent.sync {
+				print("执行了 3")
+			}
+		}
+	print("执行了 4")
+	```
+	
+	8 自定义并发队列执行异步任务（2，3不确定顺序）
+	
+	```
+	let concurrent = DispatchQueue(label: "concurrentQueue1", attributes: .concurrent)
+	print("执行了 1")
+	concurrent.async {
+		print("执行了 2")
+	}
+	concurrent.async {
+		print("执行了 3")
+	}
+	print("执行了 4")
+	```
+
+* 队列组(Group queue)   
+
+	场景1: A、B、C 三个任务并发异步执行，都执行完才执行D任务(三个网络请求和都请求完毕才刷新UI)   
+	
+	```
+	// 并发队列
+	let concurrentQ = DispatchQueue(label: "com.ddy.concurrentQueue", attributes: .concurrent)
+	// 创建组
+	let group = DispatchGroup()
+	// 网络请求1
+	group.enter()
+	concurrentQ.async {
+		DDYRequest.request(["test":"1"], { (success: Bool) in
+			group.leave()
+		})
+	}
+	// 网络请求2
+	group.enter()
+	concurrentQ.async {
+		DDYRequest.request(["test":"2"], { (success: Bool) in
+			group.leave()
+		})
+	}
+	// 调度组里的任务都执行完毕执行
+	group.notify(queue: concurrentQ) {
+		DispatchQueue.global().async {
+			// 处理数据
+			DispatchQueue.main.async {
+				// 刷新UI
+			}
+		}
+	}
+	```
+
+	场景2:A执行完才执行B(第一次请求网络拿到ID去再次请求网络拿具体数据,最后刷新UI)
+
+	```
+	// 并发队列
+	let concurrentQ = DispatchQueue(label: "com.ddy.concurrentQueue", attributes: .concurrent)
+	// 创建组
+	let group = DispatchGroup()
+	// 网络请求1
+	group.enter()
+	concurrentQ.async {
+		DDYRequest.request(["test":"1"], { (success: Bool) in
+			print("离开 1")
+			group.leave()
+	    })
+	}
+	group.wait()
+	// 网络请求2
+	group.enter()
+	concurrentQ.async {
+		DDYRequest.request(["test":"2"], { (success: Bool) in
+			print("离开 2")
+			group.leave()
+	    })
+	}
+	// 调度组里的任务都执行完毕执行
+	group.notify(queue: concurrentQ) {
+		DispatchQueue.global().async {
+			print("处理数据")
+			DispatchQueue.main.async {
+				print("刷新UI")
+			}
+		}
+	}
+	```
