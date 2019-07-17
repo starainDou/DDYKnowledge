@@ -125,3 +125,65 @@ GCD抽象层次最高，使用也简单，因此，苹果也推荐使用GCD
 3.自定义队列(Custom queue): 可以为串行，也可以为并发。Custom queue 可以通过```DispatchQueue(label: String)和DispatchQueue(label: String, attributes: DispatchQueue.Attributes.concurrent)```来获取；   
 4.队列组 (Group queue)：将多线程进行分组，最大的好处是可获知所有线程的完成情况。
 Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_group_notify 可以直接监听组里所有线程完成情况。 
+
+* 主线程串行队列(The main queue)
+
+	1.主线程串行队列同步执行任务，在主线程运行时，会产生死锁
+	
+	```
+	DispatchQueue.main.sync {
+		print("死锁了不执行")
+	}
+	```
+	
+	2.主线程串行队列异步执行任务，在主线程运行，不会产生死锁
+	
+	```
+	DispatchQueue.main.async {
+		print("执行了")
+	}
+	```
+	
+	3.安全异步主线程主队列
+	
+	```
+	import Foundation
+
+	extension DispatchQueue {
+		fileprivate static var currentQueueLabel: String? {
+		let cString = __dispatch_queue_get_label(nil)
+		return String(cString: cString)
+    	}
+    	// "com.apple.main-thread"
+    	fileprivate static var isMainQueue: Bool {
+		return currentQueueLabel == self.main.label
+    	}
+	}    
+	
+	func ddyMainAsyncSafe(_ execute: @escaping () -> Void) {
+		DispatchQueue.isMainQueue ? execute() : DispatchQueue.main.async(execute: execute)
+	}
+	
+	// 调用
+	ddyMainAsyncSafe {
+		print("主线程主队列刷新UI")
+	}	
+	```
+	
+	附：RxSwift中判断主线程主队列方式
+	
+	```
+	extension DispatchQueue {
+		private static var token: DispatchSpecificKey<()> = {
+			let key = DispatchSpecificKey<()>()
+			DispatchQueue.main.setSpecific(key: key, value: ())
+			return key
+		}()
+
+		static var isMain: Bool {
+			return DispatchQueue.getSpecific(key: token) != nil
+		}
+	}
+```
+
+注意：主线程串行队列由系统默认生成，无法调用conQueue.resume()和Queue.suspend()来控制执行继续或中断。
