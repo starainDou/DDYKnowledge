@@ -481,7 +481,7 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 	
 > ## GCD一些常用函数
 
-* asyncAfter 延迟调用
+* asyncAfter 延迟添加调用
 
 	asyncAfter并不是在指定时间后执行任务处理，而是在指定时间后把任务追加到queue里面。因此会有少许延迟。 
 
@@ -489,6 +489,7 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 	DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+2.0) {
 		print("2秒后执行的")
 	}
+	// let delay = DispatchTime.now() + Double(Int64(3 * 1000 * 1000000)) / Double(NSEC_PER_SEC)
 	// let delay = DispatchTime.now() + DispatchTimeInterval.seconds(10)
 	let delay = DispatchTime.now() + 10
 	DispatchQueue.main.asyncAfter(deadline: delay) {
@@ -503,7 +504,7 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
 	// 取消任务
 	task.cancel()
 	```  
-* 循环执行(快速迭代)     
+* 循环执行concurrentPerform(OC快速迭代 apply)     
 
 	OC中GCD的dispatch_apply()，而Swift中用concurrentPerform()
 	
@@ -521,6 +522,155 @@ Group queue 可以通过调用dispatch_group_create()来创建，通过dispatch_
    	// 		print("\($0)")
  	//	}
 	```
+
+* 信号量 semaphore
+
+	创建信号量对象，调用signal方法发送信号，信号加1，调用wait方法等待，信号减1.用信号量实现刚刚的多个请求功能。
 	
+	```
+	// DispatchSemaphore(value: )：用于创建信号量，可以指定初始化信号量计数值，这里我们默认1.
+	// semaphore.wait()：会判断信号量。如果是0，则等待，如果非0，则往下执行
+	// semaphore.signal()：代表运行结束，信号量加1，有等待的任务这个时候才会继续执行。
+	let queue = DispatchQueue.global()
+   let group = DispatchGroup()
+   let semaphore = DispatchSemaphore(value: 0)
+ 
+   queue.async(group: group) {
+       DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: {
+           semaphore.signal()
+           print("Task one finished")
+       })
+       semaphore.wait()
+   }
+   queue.async(group: group) {
+       DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+           semaphore.signal()
+           print("Task two finished")
+       })
+       semaphore.wait()
+   }
+   queue.async(group: group) {
+       print("Task three finished")
+   }
+ 
+   group.notify(queue: queue) {
+       print("All task has finished")
+   }
+	```
+	
+* 栅栏操作 barrier
+
+	GCD里的Barrier和NSOperationQueue的dependency比较接近    
+	只能用在自定义并行队列，且只保证任务中代码执行到，如果任务中存在异步则不保证执行完
+
+	```
+	let concurrentQ = DispatchQueue(label: "com.ddy.barrier", attributes: .concurrent)
+	concurrentQ.async {
+		print("task 0-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 0-1")
+		})
+		print("task 0-3")
+	}
+	concurrentQ.async {
+		print("task 1-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 1-1")
+		})
+		print("task 1-3")
+	}
+	concurrentQ.async(flags: .barrier) {
+		print("task 2-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 2-1")
+		})
+	}
+	concurrentQ.async {
+		print("task 3-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 3-1")
+		})
+	}
+	```
+
+	```
+	let concurrentQ = DispatchQueue(label: "com.ddy.barrier", attributes: .concurrent)
+	concurrentQ.async {
+		print("task 0-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 0-1")
+		})
+		print("task 0-3")
+	}
+	concurrentQ.async {
+		print("task 1-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 1-1")
+		})
+		print("task 1-3")
+	}
+	let writeTask = DispatchWorkItem(flags: .barrier) {
+		print("task 2-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 2-1")
+		})
+	}
+	concurrentQ.async(execute: writeTask)
+	concurrentQ.async {
+		print("task 3-0")
+		DDYRequest.request(2, { (success: Bool) in
+			print("task 3-1")
+		})
+	}
+	```
+	
+	执行顺序分析    
+	先排除各个任务中异步延迟操作(该操作已经执行到，但不保证执行完回调)    
+	0-0         
+	(0-3 1-0 1-3) or (1-0 1-3 0-3) or (1-0 0-3 1-3)    
+	2-0   
+	然后分析异步延迟的回调   
+	(0-1 1-1 3-1) or (0-1 3-1 1-1) or (1-1 0-1 3-1) or (1-1 3-1 0-1) or (3-1 0-1 1-1) or (3-1 1-1 0-1)    
+	2-1    
+	
+* DispatchSource实现GCD定时器
+
+	Timer的无奈:
+	Timer的创建与撤销必须在同一个线程操作,在多线程环境下使用不便.
+	使用时必须保证有一个活跃的runloop,然而主线程的runloop是默认开启的,子线程的runloop却是默认不开启的,当在子线程中使用Timer的时候还需要先激活runloop,否则Timer是不会起效的.
+	内存泄漏问题. 在控制器中使用Timer的时候需要控制器对Timer进行强引用,然而Timer还会对控制器进行强引用,造成循环引用最终控制器无法释放导致内存泄漏.
+
+	```
+	private class func testGCDTimer() {
+		// 倒计时总次数
+		var timeCount = 20
+		// 自定义并发队列
+		let concurrentQ = DispatchQueue(label: "com.ddy.timer", attributes: .concurrent)
+		// 在自定义队列的定时器
+		let timer = DispatchSource.makeTimerSource(flags: [], queue: concurrentQ)
+		// 设置立即开始 0.5秒循环一次
+		timer.schedule(deadline: .now(), repeating: 0.5)
+		// 触发回调事件
+		timer.setEventHandler {
+			timeCount = timeCount - 1
+			if timeCount <= 0 {
+				timer.cancel()
+			}
+			DispatchQueue.main.async {
+				print("主线程更新UI \(timeCount)")
+			}
+		}
+		// cancel事件回调
+		timer.setCancelHandler {
+			DispatchQueue.main.async {
+				print("已结束I \(timeCount)")
+			}
+		}
+		// 启动定时器
+		timer.resume()
+	}
+	```
+
 	
 [参考 Swift4 - GCD的使用](https://blog.csdn.net/longshihua/article/details/79756676)
+[Swift4.0 - GCD](https://www.jianshu.com/p/96032a032c7c)
