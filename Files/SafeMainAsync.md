@@ -15,17 +15,17 @@ DispatchQueue.main.async {
 
 ```
 // OC 早期SDWebImage
-#define dispatch_main_sync_safe(block)\
-	if ([NSThread isMainThread]) {\
-		block();\
-	} else {\
-		dispatch_sync(dispatch_get_main_queue(), block);\
+#define dispatch_main_sync_safe(block)
+	if ([NSThread isMainThread]) {
+		block();
+	} else {
+		dispatch_sync(dispatch_get_main_queue(), block);
 	}
-#define dispatch_main_async_safe(block)\
-	if ([NSThread isMainThread]) {\
-		block();\
-	} else {\
-		dispatch_async(dispatch_get_main_queue(), block);\
+#define dispatch_main_async_safe(block)
+	if ([NSThread isMainThread]) {
+		block();
+	} else {
+		dispatch_async(dispatch_get_main_queue(), block);
 	}
 
 // Swift 早期Kingfisher
@@ -47,11 +47,11 @@ extension DispatchQueue {
 ```
 // OC SDWebImage
 #ifndef dispatch_main_async_safe
-#define dispatch_main_async_safe(block)\
-    if (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(dispatch_get_main_queue())) {\
-        block();\
-    } else {\
-        dispatch_async(dispatch_get_main_queue(), block);\
+#define dispatch_main_async_safe(block)
+    if (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(dispatch_get_main_queue())) {
+        block();
+    } else {
+        dispatch_async(dispatch_get_main_queue(), block);
     }
 #endif
 ```
