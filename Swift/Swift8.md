@@ -35,16 +35,24 @@
   		weakSelf?.timerRun()
 	})
 	RunLoop.current.add(timer!, forMode: .default)
-	// 还有其他API，暂时用不到
+	// 还有其他API，暂时用不到，不做太多说明
+	let timerFireDate = Date.init(timeIntervalSinceNow: 79)
+   let timer = Timer.init(fireAt: timerFireDate, interval: 1, target: self, selector: #selector (timerRun), userInfo: nil, repeats: true)
+   RunLoop.current.add(timer, forMode: .defaultRunLoopMode)
+   timer.fire()
+   	
+   	@objc func timerRun() {
+   		print("timerRun \(Date())")
+   	}
 	```
 	
 	方式1和方式2带来一个严重的问题--循环引用导致内存泄漏[参考苹果文档](https://developer.apple.com/documentation/foundation/timer)    
 	由于内部获取传入的target对象的指针并强引用该对象，再加上runloop对timer的强引用，必然导致循环引用。    
-	即使声明局部变量(runloop--target--timer三者关系)，即使再加上用weak形式(weak对象和原对象地址相同)，也改变不了循环引用问题的存在
+	即使声明局部变量(runloop--target--timer三者关系并没有破坏)，即使再加上用weak形式(weak对象和原对象地址相同)，也改变不了循环引用问题的存在
 	方式3和方式4由于采用了block回调的方式，变相的将target编程timer自己，从而阻断了闭环，解决了循环引用问题，但只适用于iOS10及以后系统
 	要想兼容性的(主要iOS8-iOS9)解决就要另选方案  
 	
-	解决方案1
+	解决方案
 	
 	写Timer的扩展，实现类似iOS10以后的block回调形式(内部判断，版本满足iOS10则直接调用系统block形式，不满足则自己转换成block形式)
 	
@@ -73,26 +81,93 @@
         	}
    		}
 	}
+	
 	```
 	
-	解决方案2
+	也可以仿照OC中NSProxy方案，引入中间人，进行转发
 	
+	异步子线程中使用Timer
 	
-	
-	
-	
-	
+	```
+	DispatchQueue.global().async {
+		// 如果timer为全局变量，需要用weak形式
+		let timer = Timer.ddyInit(timeInterval: 1, repeats: true, block: { (timer: Timer) in
+			weakSelf?.timerRun()
+		})
+ 		RunLoop.current.add(timer, forMode: .default)
+		// 子线程(异步情况)默认无执行的runloop
+		RunLoop.current.run()
+  	}
+	```
+		
  
-2. dispatchSourceTimer  
+2. dispatchSourceTimer（GCD定时器）  
 
 	```
-	
+	private class func testGCDTimer() {
+		// 倒计时总次数
+		var timeCount = 20
+		// 自定义并发队列
+		let concurrentQ = DispatchQueue(label: "com.ddy.timer", attributes: .concurrent)
+		// 在自定义队列的定时器
+		let timer = DispatchSource.makeTimerSource(flags: [], queue: concurrentQ)
+		// 设置立即开始 0.5秒循环一次
+		timer.schedule(deadline: .now(), repeating: 0.5)
+		// 触发回调事件
+		timer.setEventHandler {
+			timeCount = timeCount - 1
+			if timeCount <= 0 {
+				timer.cancel()
+			}
+			DispatchQueue.main.async {
+				print("主线程更新UI \(timeCount)")
+			}
+		}
+		// cancel事件回调
+		timer.setCancelHandler {
+			DispatchQueue.main.async {
+				print("已结束I \(timeCount)")
+			}
+		}
+		// 启动定时器
+		timer.resume()
+	}
 	```
 
-3. CADisplayLink  
+3. CADisplayLink 
+
+	CADisplayLink 是一种触发频率和屏幕刷新频率相同的高精度定时器。 
 
 	```
-	
+	private func testCADisplayLink() {
+
+		let displayLink = CADisplayLink.init(target: self, selector: #selector(handleDisplayLink(_:)))
+		// 设置触发频率
+		if #available(iOS 10, *) {
+			// 每秒多少帧，设置0则默认60，即是一秒内有60帧执行刷新调用。
+			displayLink.preferredFramesPerSecond = 30
+      	} else {
+    		// 每多少帧调用一次
+ 			displayLink.frameInterval = 2
+ 		}
+ 		displayLink.add(to: RunLoop.main, forMode: .default)
+	}
+
+	@objc func handleDisplayLink(_ displayLink:CADisplayLink) -> Void {
+ 		// 当前帧开始刷新的时间
+ 		print(displayLink.timestamp)
+ 		// 一帧刷新使用的时间
+      	print(displayLink.duration)
+      	// 下一帧开始刷新的时间
+      	print(displayLink.targetTimestamp)
+     	// duration  = targetTimestamp - timestamp 
+     	// 暂停帧的刷新 true:停 ; false:开始
+     	displayLink.isPaused = true
+    	// 将定时器移除主循环
+     	displayLink.remove(from: RunLoop.main, forMode: .default)
+    	// 停止定时器
+     	displayLink.invalidate()
+ 	}
 	```
 	
 * 结构体(struct) 和 类(class) 的区别
