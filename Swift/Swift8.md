@@ -1,6 +1,6 @@
 # Swift8-琐碎知识点
 
-* 三方库一处引入，处处使用
+* ### 三方库一处引入，处处使用
 	
 	```
 	// 可以建立一个文件放进去，如 Const.swift
@@ -13,7 +13,7 @@
 	@_exported import ObjectMapper
 	```
 	
-* 几种定时器
+* ### 几种定时器
 
 1. Timer   
 
@@ -99,6 +99,31 @@
 		RunLoop.current.run()
   	}
 	```
+	
+	切后台定时器停止解决方案
+	
+	```
+	// 后台任务标识
+	var backgroundTask:UIBackgroundTaskIdentifier! = nil
+
+	func applicationDidEnterBackground(_ application: UIApplication) {
+		// 延迟程序静止的时间
+     	DispatchQueue.global().async() {
+			//如果已存在后台任务，先将其设为完成
+         	if self.backgroundTask != nil {
+				application.endBackgroundTask(self.backgroundTask)
+             	self.backgroundTask = UIBackgroundTaskInvalid
+         	}
+     	}
+        
+     	//如果要后台运行
+     	self.backgroundTask = application.beginBackgroundTask(expirationHandler: { () -> Void in
+			//如果没有调用endBackgroundTask，时间耗尽时应用程序将被终止
+        	 application.endBackgroundTask(self.backgroundTask)
+         	self.backgroundTask = UIBackgroundTaskInvalid
+     	})
+ 	}
+	```
 		
  
 2. dispatchSourceTimer（GCD定时器）  
@@ -170,7 +195,7 @@
  	}
 	```
 	
-* 结构体(struct) 和 类(class) 的区别
+* ### 结构体(struct) 和 类(class) 的区别
 
 	swift中     
 
@@ -191,7 +216,7 @@
 	- 对于成员访问权限以及继承方式，class默认private的，而struct是public的。
 	- class还可以用于表示模板类型，struct则不行
 
-* 2B程序员 普通程序员 大神程序员
+* ### 2B程序员 普通程序员 大神程序员
 
 	交换数组中索引下标m和n处两个数的位置(m,n均不会越界)
 	
@@ -273,4 +298,16 @@
 		- 易于“并发编程”,因为不修改变量的值，都是返回新值。   
 		- 最大的好处就是能把函数当参数用!!  
 	[参考](https://www.jianshu.com/p/fc8c13ce7157) 
+	
+* ### 一些关键字
+	
+	convenience
+	
+	- 指定构造方法: 没有convenience单词,必须对所有属性进行初始化
+	- 便利构造方法: 有convenience单词,不用对所有属性进行初始化，因为便利构造方法依赖于指定构造方法。
+	
+	便利构造函数的特点：  
+  	1、便利构造函数通常都是写在extension里面  
+  	2、便利函数init前面需要加载convenience   
+ 	3、在便利构造函数中需要明确的调用self.init() 
 		
