@@ -417,7 +417,7 @@ public static func cameraAuth(_ closure: @escaping (Bool) -> Void) -> Void {
 }
 ```
 
-解决循环引用的三种方式
+[解决循环引用的三种方式](https://docs.swift.org/swift-book/LanguageGuide/AutomaticReferenceCounting.html)
 
 ```
 // 1、可以使用weak关键字将对象之间的联系变为弱引用
@@ -428,7 +428,7 @@ weak var weakself = self
 
 // 3、使用unowned解决
 [unowned self]
-// 但是该方法十分危险，要确保数据一定有值。否则会Crash
+// 但是该方法十分危险，要确保数据一定有值，否则会Crash
 ```
 
 
