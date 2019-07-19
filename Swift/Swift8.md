@@ -18,8 +18,70 @@
 1. Timer   
 
 	```
+	// 创建方式1 自动加入runloop
+	timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerRun), userInfo: nil, repeats: true)
+	
+	// 创建方式2 手动加入runloop 
+	timer = Timer.init(timeInterval: 1, target: self, selector: #selector(timerRun), userInfo: nil, repeats: true)
+ 	RunLoop.current.add(timer!, forMode: .default)
+ 	
+ 	// 创建方式3 自动加入runloop iOS10后block回调
+ 	timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer: Timer) in
+  		weakSelf?.timerRun()
+	})
+	
+ 	// 创建方式4 手动加入runloop iOS10后block回调
+ 	timer = Timer.init(timeInterval: 1, repeats: true, block: { (timer: Timer) in
+  		weakSelf?.timerRun()
+	})
+	RunLoop.current.add(timer!, forMode: .default)
+	// 还有其他API，暂时用不到
+	```
+	
+	方式1和方式2带来一个严重的问题--循环引用导致内存泄漏[参考苹果文档](https://developer.apple.com/documentation/foundation/timer)    
+	由于内部获取传入的target对象的指针并强引用该对象，再加上runloop对timer的强引用，必然导致循环引用。    
+	即使声明局部变量(runloop--target--timer三者关系)，即使再加上用weak形式(weak对象和原对象地址相同)，也改变不了循环引用问题的存在
+	方式3和方式4由于采用了block回调的方式，变相的将target编程timer自己，从而阻断了闭环，解决了循环引用问题，但只适用于iOS10及以后系统
+	要想兼容性的(主要iOS8-iOS9)解决就要另选方案  
+	
+	解决方案1
+	
+	写Timer的扩展，实现类似iOS10以后的block回调形式(内部判断，版本满足iOS10则直接调用系统block形式，不满足则自己转换成block形式)
 	
 	```
+	extension Timer {
+	
+		public static func ddyScheduledTimer(withTimeInterval interval: TimeInterval, repeats: Bool, block: @escaping (Timer) -> Void) -> Timer {
+			if #available(iOS 10, *) {
+				return scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { block($0) })
+			} else {
+            	return scheduledTimer(timeInterval: interval, target: self, selector: #selector(ddyTimerInvoke(_:)), userInfo: block, repeats: repeats)
+        	}
+    	}
+
+		public class func ddyInit(timeInterval interval: TimeInterval, repeats: Bool, block: @escaping (Timer) -> Void)  -> Timer {
+        	if #available(iOS 10, *) {
+            	return self.init(timeInterval: interval, repeats: repeats, block: { block($0) })
+        	} else {
+            	return self.init(timeInterval: interval, target: self, selector: #selector(ddyTimerInvoke(_:)), userInfo: block, repeats: repeats)
+        	}
+    	}
+
+    	@objc static func ddyTimerInvoke(_ timer: Timer) {
+        	if let block = timer.userInfo as? (Timer) -> Void {
+            	block(timer)
+        	}
+   		}
+	}
+	```
+	
+	解决方案2
+	
+	
+	
+	
+	
+	
  
 2. dispatchSourceTimer  
 
