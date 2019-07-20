@@ -321,7 +321,7 @@ class Classname {
  	函数名后面跟着用尖括号括起来占位类型名 T，尖括号告诉Swift编译器那个 T 是函数定义内的一个占位类型名，因此编译器不会去查找名为 T 的实际类型。
  	
  	
- 	范型类型
+ 	* 范型类型
  	
  	Swift 允许定义自己的泛型类型
  	
@@ -350,7 +350,7 @@ class Classname {
     }
  	```
  	
- 	扩展泛型类型
+ 	* 扩展泛型类型
  	
  	当用extension扩展一个泛型类型的时候，并不需要在扩展的定义中提供类型参数列表。更加方便的是，原始类型定义中声明的类型参数列表在扩展里是可以使用的，并且这些来自原始类型中的参数名称会被用作原始定义中类型参数的引用。
  	
@@ -372,10 +372,10 @@ class Classname {
 	extension Array: Container {}
 	```
 	
-	类型约束
+	* 类型约束
 	类型约束指定了一个必须继承自指定类的类型参数，或者遵循一个特定的协议或协议构成。
 
-	类型约束语法
+	* 类型约束语法
 	你可以写一个在一个类型参数名后面的类型约束，通过冒号分割，来作为类型参数链的一部分。这种作用于泛型函数的类型约束的基础语法如下所示（和泛型类型的语法相同）：
 	
 	```
@@ -384,7 +384,66 @@ class Classname {
     	// TODO:
 	}
 	```
- 
+	
+	* 关联类型
+	
+	associatedtype关键字设置关联类型实例
+	
+	```
+	// 遵循该协议就要满足协议内的条件内容
+	protocol DDYBaseStackProtocol {
+		// 使用associatedtype关键字来设置关联类型实例
+    	associatedtype DDYItemType
+    	// 添加一个新元素到容器
+    	mutating func append(_ item: DDYItemType)
+    	// 获取容器中元素个数
+    	var count: Int { get }
+    	// 通过索引类型下标检索容器中每一个元素
+    	subscript(i: Int) -> DDYItemType { get }
+	}
+
+	// 模仿栈操作
+	struct DDYStack<Element>: DDYBaseStackProtocol {
+    	// 原始部分
+    	var items = [Element]()
+    	mutating func push(_ item: Element) {
+        	items.append(item)
+    	}
+    	mutating func pop() -> Element {
+        	return items.removeLast()
+    	}
+    	// DDYBaseStackProtocol协议实现部分
+    	mutating func append(_ item: Element) {
+        	self.push(item)
+    	}
+    	var count: Int {
+        	return items.count
+    	}
+    	subscript(i: Int) -> Element {
+        	return items[i]
+    	}
+	}
+	
+	// 使用
+	var stackInt = DDYStack<Int>()
+   	stackInt.push(1)
+	stackInt.append(2)
+   	print("打印 \(stackInt.count) \(stackInt.items) \(stackInt[1])")
+	```
+	
+	* 对构造器的规定
+	
+	协议可以要求它的遵循者实现指定的构造器(在协议的定义里写下构造器的声明，但不需实现)
+	
+	* 协议类型
+	
+	尽管协议本身并不实现任何功能，但是协议可以被当做类型来使用。
+
+	协议可以像其他普通类型一样使用，使用场景:
+
+	作为函数、方法或构造器中的参数类型或返回值类型   
+	作为常量、变量或属性的类型    
+	作为数组、字典或其他容器中的元素类型    
  
 
 
