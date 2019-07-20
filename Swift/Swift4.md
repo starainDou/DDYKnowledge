@@ -22,9 +22,9 @@
 使用默认构造函数
 ********************************/
 class Student{
-    //类属性
-    var name:String = ""
-    var number:Int = 0
+   	//类属性
+   	var name:String = ""
+   	var number:Int = 0
 }
 var student = Student()
  
@@ -32,20 +32,20 @@ var student = Student()
 自定义构造函数
 ********************************/
 class Person{
-    //类属性
-    var name:String
-    var age:Int
+   	//类属性
+   	var name:String
+   	var age:Int
  
-    //类构造函数
-    init(newName:String, newAge:Int){
-        self.name = newName
-        self.age = newAge
-    }
+   	//类构造函数
+   	init(newName:String, newAge:Int){
+   	   	self.name = newName
+   	   	self.age = newAge
+   	}
  
-    //成员函数（实例方法）
-    func say() -> String{
-        return "我叫\(name)"
-    }
+   	//成员函数（实例方法）
+   	func say() -> String{
+   	   	return "我叫\(name)"
+   	}
 }
 var p = Person(newName: "hangge",newAge: 32)
 print(p.say())
@@ -54,12 +54,12 @@ print(p.say())
 
 ```
 class DBClass{
-    var conn:Connection? = Connection()
-    deinit{
-        //可以做一些清理工作
-        self.conn!.close()
-        self.conn = nil
-    }
+   	var conn:Connection? = Connection()
+   	deinit{
+   	   	//可以做一些清理工作
+   	   	self.conn!.close()
+   	   	self.conn = nil
+   	}
 }
  
 var db:DBClass? = DBClass()
@@ -77,17 +77,17 @@ db = nil //设置nil后即可执行deinit()方法
 计算属性，即使用get和set来间接获取/改变其他属性的值      
 ```
 class Calcuator{
-    var a:Int = 1;
-    var b:Int = 1;
+   	var a:Int = 1;
+   	var b:Int = 1;
  
-    var sum:Int{
-        get{
-            return a + b
+   	var sum:Int{
+   	   	get {
+   	   	    return a + b
         }
-        set(val){
-            b = val - a
-        }
-    }
+        set(val) {
+   	   	   	b = val - a
+   	   	}
+   	}
 }
 let cal = Calcuator();
 print(cal.sum) //2
@@ -226,4 +226,165 @@ class Classname {
 ```
 
 
-未完待续
+> ## 协议
+
+ 协议规定了用来实现某一特定功能所必需的方法和属性。   
+ 任意能够满足协议要求的类型被称为遵循这个协议。   
+ 类，结构体或枚举类型都可以遵循协议，并提供具体实现来完成协议定义的方法和功能。
+ 
+ Swift中协议类似于别的语言里的接口，协议里只做方法的声明，包括方法名、返回值、参数等信息，而没有具体的方法实现。
+ 
+ 
+	```
+ 	protocol ddyBasePersonProtocol {
+		// 协议中通常用var声明变量属性，然后指明读写权限，不用指定存储型属性还是计算型属性
+		var nickName: String { get set }
+   		// 只读属性
+   		var age: Int { get }
+   		// 类型方法
+   		static func runMethod()
+   		// 实例方法
+   		func eatMethod(food: String) -> Bool
+   		// 突变方法
+   		mutating func changeNickNameMethod(_ newNickName: String)
+	}
+	// 值类型(协议，结构体，枚举)的实例方法中，将mutating关键字作为函数的前缀，表示可以在该方法实现中修改它所属的实例及其实例属性的值。
+
+	protocol ddyStudentProtocol: ddyBasePersonProtocol {
+   		func studyMethod()
+	}
+
+	struct student: ddyStudentProtocol {
+   		func studyMethod() {
+   	   		print("studyMethod")
+   		}
+   	
+   		var nickName: String
+   	
+   		var age: Int
+   	
+   		static func runMethod() {
+   	   		print("runMethod")
+   		}
+   	
+   		mutating func changeNickNameMethod(_ newNickName: String) {
+   	   		self.nickName = newNickName
+   		}
+   	
+   		func eatMethod(food: String) -> Bool {
+   	   		return food == "dinner" ? true : false
+   		}
+	}
+
+	class ProtocolTest: NSObject {
+   	
+   		public class func testBasic() {
+   	   		student.runMethod()
+   	   		var liLei = student(nickName: "xiao li", age: 18)
+   	   		liLei.studyMethod()
+   	   		let isEated = liLei.eatMethod(food: "dinner")
+   	   		liLei.changeNickNameMethod("Lao Li")
+   	   		print("\(liLei.age) \(liLei.nickName) \(isEated)")
+   		}
+	}
+	// runMethod
+	// studyMethod
+	// 18 Lao Li true
+	// image
+	// image
+	// image
+	```
+
+> ## 范型
+
+
+* Swift 提供了泛型让你写出灵活且可重用的函数和类型。
+* Swift 标准库是通过泛型代码构建出来的。
+* Swift 的数组和字典类型都是泛型集。
+
+ 
+	```
+	// 交换两个字符串
+ 	public class func swapTwoString(_ value1: inout String,_ value2: inout String) {
+     	(value1, value2) = (value2, value1)
+    }
+    // 交换两个浮点数
+   	public class func swapTwoDouble(_ value1: inout Double,_ value2: inout Double) {
+    	(value1, value2) = (value2, value1)
+    }
+   // 以上函数功能相同只是类型不同，所以使用范型来避免重复代码
+   public class func swapTwoValues<T>(_ value1: inout T,_ value2: inout T) {
+  		(value1, value2) = (value2, value1)
+   }
+ 	```
+ 	
+ 	函数名后面跟着用尖括号括起来占位类型名 T，尖括号告诉Swift编译器那个 T 是函数定义内的一个占位类型名，因此编译器不会去查找名为 T 的实际类型。
+ 	
+ 	
+ 	范型类型
+ 	
+ 	Swift 允许定义自己的泛型类型
+ 	
+ 	```
+	// 模仿栈操作
+	struct DDYStack<Element> {
+   		var items = [Element]()
+    	mutating func push(_ item: Element) {
+        	items.append(item)
+    	}
+    	mutating func pop() -> Element {
+        	return items.removeLast()
+    	}
+	} 	
+
+	public class func testGenerics() {
+        var stackString = DDYStack<String>()
+        stackString.push("one")
+        stackString.push("two")
+        let removedElement = stackString.pop()
+        print("\(stackString) \(removedElement)")
+        
+        var stackDouble = DDYStack<Double>()
+        stackDouble.push(3.14)
+        print("\(stackDouble)")
+    }
+ 	```
+ 	
+ 	扩展泛型类型
+ 	
+ 	当用extension扩展一个泛型类型的时候，并不需要在扩展的定义中提供类型参数列表。更加方便的是，原始类型定义中声明的类型参数列表在扩展里是可以使用的，并且这些来自原始类型中的参数名称会被用作原始定义中类型参数的引用。
+ 	
+ 	```
+ 	extension Stack {
+    	var topItem: Element? {
+       	return items.isEmpty ? nil : items[items.count - 1]
+    	}
+	}
+ 	```
+ 	
+ 	我们也可以通过扩展一个存在的类型来指定关联类型。
+
+	例如 Swift 的 Array 类型已经提供 append(_:) 方法，一个 count 属性，以及一个接受 Int 类型索引值的下标用以检索其元素。这三个功能都符合 Container 协议的要求，所以你只需简单地声明 Array 采纳该协议就可以扩展 Array。
+
+	以下实例创建一个空扩展即可:
+	
+	```
+	extension Array: Container {}
+	```
+	
+	类型约束
+	类型约束指定了一个必须继承自指定类的类型参数，或者遵循一个特定的协议或协议构成。
+
+	类型约束语法
+	你可以写一个在一个类型参数名后面的类型约束，通过冒号分割，来作为类型参数链的一部分。这种作用于泛型函数的类型约束的基础语法如下所示（和泛型类型的语法相同）：
+	
+	```
+	// 第一个类型参数T(T必须是DDYClass子类的类型约束，第二个参数U(符合DDYProtocol协议的类型约束)
+	func ddyFunc<T: DDYClass, U: DDYProtocol>(someT: T, someU: U) {
+    	// TODO:
+	}
+	```
+ 
+ 
+
+
