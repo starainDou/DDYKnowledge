@@ -375,16 +375,6 @@ class Classname {
     	}
 	}
  	```
- 	
- 	我们也可以通过扩展一个存在的类型来指定关联类型。
-
-	例如 Swift 的 Array 类型已经提供 append(_:) 方法，一个 count 属性，以及一个接受 Int 类型索引值的下标用以检索其元素。这三个功能都符合 Container 协议的要求，所以你只需简单地声明 Array 采纳该协议就可以扩展 Array。
-
-	以下实例创建一个空扩展即可:
-	
-	```
-	extension Array: Container {}
-	```
 	
 	* 类型约束
 	类型约束指定了一个必须继承自指定类的类型参数，或者遵循一个特定的协议或协议构成。
@@ -466,10 +456,122 @@ extension MyClass: MyProtocolOne, MyProtocolTwo {
 
 注意：扩展不能直接添加存储属性
 
+间接方式用扩展给类(结构体，枚举)添加存储属性    
+
+```
+extension UILabel {
+
+    var edgeInsets: UIEdgeInsets {
+        get {
+            guard let edgeInsets = objc_getAssociatedObject(self, &edgeInsetsKey) as? UIEdgeInsets else {
+                return UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
+            }
+            return edgeInsets
+        }
+        set {
+            objc_setAssociatedObject(self, &edgeInsetsKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_COPY_NONATOMIC)
+        }
+    }
+    
+    public static func ddySwizzleMethod() {
+        ddySwizzle(#selector(draw(_:)), newSel: #selector(ddyDraw(_:)))
+        ddySwizzle(#selector(getter: UILabel.intrinsicContentSize), newSel: #selector(getter: UILabel.ddyIntrinsicContentSize))
+    }
+    private static func ddySwizzle(_ oldSel: Selector, newSel: Selector) {
+        guard let m1 = class_getInstanceMethod(self, oldSel) else {
+            return
+        }
+        guard let m2 = class_getInstanceMethod(self, newSel) else {
+            return
+        }
+        
+        if (class_addMethod(self, newSel, method_getImplementation(m2), method_getTypeEncoding(m2))) {
+            class_replaceMethod(self, newSel, method_getImplementation(m1), method_getTypeEncoding(m1))
+        } else {
+            method_exchangeImplementations(m1, m2)
+        }
+    }
+    
+    @objc func ddyDraw(_ rect: CGRect) {
+        
+    }
+    
+    @objc var ddyIntrinsicContentSize: CGSize {
+        get {
+            let superSize = super.intrinsicContentSize
+            return CGSize(width: superSize.width + edgeInsets.left + edgeInsets.right, height: superSize.height + edgeInsets.top + edgeInsets.bottom)
+        }
+    }
+}
+```
+
+
+[where语句](http://www.hangge.com/blog/cache/detail_1826.html)
+
+类型约束能够确保类型符合泛型函数或类的定义约束。      
+在在类型参数列表后面，where语句后跟一个或者多个针对关联类型的约束，以及（或）一个或多个类型和关联类型间的等价(equality)关系。
+
+```
+
+// 扩展的protocol 用于扩展具体功能
+protocol DDYBaseExtensionProtocol {
+    associatedtype DDYT
+    /// 访问原来的value
+    var ddyValue: DDYT { get }
+}
+
+// 扩展点protocol 作为扩展和访问点
+protocol DDYBaseExtensionPoint {
+    associatedtype DDYT
+    /// 访问扩展功能
+    var ddy: DDYT { get }
+}
+
+// 扩展基础实现
+public final class DDYBaseExtensionImpl<T>: DDYBaseExtensionProtocol {
+    
+    typealias DDYT = T
+    
+    public let ddyValue: T
+    
+    public init(ddyValue: T) {
+        self.ddyValue = ddyValue
+    }
+}
+
+extension String: DDYBaseExtensionPoint {
+    var ddy: DDYBaseExtensionImpl<String> {
+        return DDYBaseExtensionImpl.init(ddyValue: self)
+    }
+}
+
+extension DDYBaseExtensionProtocol where DDYT == String {
+    internal func ddyTestTestTest() -> String {
+        return ddyValue.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+    }
+}
+
+
+class ExtensionWhereTest: NSObject {
+    
+    public class func testBasic() {
+        ExtensionWhereTest().testExtensionProtocol()
+    }
+    
+    private func testExtensionProtocol() {
+        let testStr: String = "  1234567890  "
+        let finalStr = testStr.ddy.ddyTestTestTest()
+        print("\(finalStr)")
+    }
+}
+```
+
 
 
 	
 	   
- [.](https://www.runoob.com/swift/swift-extensions.html)
+ [.](https://www.runoob.com/swift/swift-extensions.html)    
+ [.](https://www.jianshu.com/p/325aa6168013)
+ 
 
 
