@@ -445,6 +445,26 @@ class Classname {
    	print("打印 \(stackInt.count) \(stackInt.items) \(stackInt[1])")
 	```
 	
+> ## 扩展
+
+扩展(extension)就是向一个已有的类、结构体或枚举类型添加新功能，但不能重写已有的功能。
+
+Swift 中的扩展可以：
+
+* 添加计算型属性和计算型静态属性
+* 定义实例方法和类型方法
+* 提供新的构造器
+* 定义下标
+* 定义和使用新的嵌套类型
+* 使一个已有类型符合某个协议
+
+```
+extension MyClass: MyProtocolOne, MyProtocolTwo {
+    // 协议实现
+}
+```
+
+	
 	   
  
 
