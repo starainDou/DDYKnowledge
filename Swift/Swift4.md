@@ -464,8 +464,12 @@ extension MyClass: MyProtocolOne, MyProtocolTwo {
 }
 ```
 
+注意：扩展不能直接添加存储属性
+
+
+
 	
 	   
- 
+ [.](https://www.runoob.com/swift/swift-extensions.html)
 
 
