@@ -82,7 +82,7 @@
 * ### 综合封装
 
 	MD5、SHA1、SHA224、SHA256、SHA384、SHA512   
-	AES、AES128、DES、DES3、CAST、RC2RC4、Blowfish
+	
 	
 	```
 	// Secure Hash Algorithm
@@ -96,22 +96,6 @@
         	case .SHA256:   return (algorithm: CCHmacAlgorithm(kCCHmacAlgSHA256), length: Int(CC_SHA256_DIGEST_LENGTH))
         	case .SHA384:   return (algorithm: CCHmacAlgorithm(kCCHmacAlgSHA384), length: Int(CC_SHA384_DIGEST_LENGTH))
         	case .SHA512:   return (algorithm: CCHmacAlgorithm(kCCHmacAlgSHA512), length: Int(CC_SHA512_DIGEST_LENGTH))
-        	}
-    	}
-	}
-
-	enum DDYAdvancedCryptType {
-    	case AES, AES128, DES, DES3, CAST, RC2, RC4, Blowfish
-    	var infoTuple: (algorithm: CCAlgorithm, digLength: Int, keyLength: Int) {
-       	switch self {
-        	case .AES:     return (CCAlgorithm(kCCAlgorithmAES),       Int(kCCKeySizeAES128),      Int(kCCKeySizeAES128))
-        	case .AES128:  return (CCAlgorithm(kCCAlgorithmAES128),    Int(kCCBlockSizeAES128),    Int(kCCKeySizeAES256))
-        	case .DES:     return (CCAlgorithm(kCCAlgorithmDES),       Int(kCCBlockSizeDES),       Int(kCCKeySizeDES))
-        	case .DES3:    return (CCAlgorithm(kCCAlgorithm3DES),      Int(kCCBlockSize3DES),      Int(kCCKeySize3DES))
-        	case .CAST:    return (CCAlgorithm(kCCAlgorithmCAST),      Int(kCCBlockSizeCAST),      Int(kCCKeySizeMaxCAST))
-        	case .RC2:     return (CCAlgorithm(kCCAlgorithmRC2),       Int(kCCBlockSizeRC2),       Int(kCCKeySizeMaxRC2))
-        	case .RC4:     return (CCAlgorithm(kCCAlgorithmRC4),       Int(kCCBlockSizeRC2),       Int(kCCKeySizeMaxRC4))
-        	case .Blowfish:return (CCAlgorithm(kCCAlgorithmBlowfish),  Int(kCCBlockSizeBlowfish),  Int(kCCKeySizeMaxBlowfish))
         	}
     	}
 	}
@@ -150,15 +134,38 @@
     	free(buffer)
     	return hash as String
     }
+	```
+	
+	对称加密:AES、AES128、DES、DES3、CAST、RC2RC4、Blowfish     
+	iOS中填充规则PKCS7,加解密模式ECB(无补码,CCCrypt函数中对应的nil),字符集UTF8,输出base64(可以自己改hex)
+	
 
-    public static func advancedCrypt(string: String?, cryptType: DDYAdvancedCryptType, key: String?, encode: Bool) -> String? {
+	```
+	// Symmetric Cryptographic Algorithm
+	enum DDYSCAType {
+    	case AES, AES128, DES, DES3, CAST, RC2, RC4, Blowfish
+    	var infoTuple: (algorithm: CCAlgorithm, digLength: Int, keyLength: Int) {
+       	switch self {
+        	case .AES:     return (CCAlgorithm(kCCAlgorithmAES),       Int(kCCKeySizeAES128),      Int(kCCKeySizeAES128))
+        	case .AES128:  return (CCAlgorithm(kCCAlgorithmAES128),    Int(kCCBlockSizeAES128),    Int(kCCKeySizeAES256))
+        	case .DES:     return (CCAlgorithm(kCCAlgorithmDES),       Int(kCCBlockSizeDES),       Int(kCCKeySizeDES))
+        	case .DES3:    return (CCAlgorithm(kCCAlgorithm3DES),      Int(kCCBlockSize3DES),      Int(kCCKeySize3DES))
+        	case .CAST:    return (CCAlgorithm(kCCAlgorithmCAST),      Int(kCCBlockSizeCAST),      Int(kCCKeySizeMaxCAST))
+        	case .RC2:     return (CCAlgorithm(kCCAlgorithmRC2),       Int(kCCBlockSizeRC2),       Int(kCCKeySizeMaxRC2))
+        	case .RC4:     return (CCAlgorithm(kCCAlgorithmRC4),       Int(kCCBlockSizeRC2),       Int(kCCKeySizeMaxRC4))
+        	case .Blowfish:return (CCAlgorithm(kCCAlgorithmBlowfish),  Int(kCCBlockSizeBlowfish),  Int(kCCKeySizeMaxBlowfish))
+        	}
+    	}
+	}
+
+    public static func scaCrypt(string: String?, cryptType: DDYSCAType, key: String?, encode: Bool) -> String? {
 
     	if string == nil {
     	    return nil
     	}
     	let strData = encode ? string!.data(using: .utf8) : Data(base64Encoded: string!)
     	// 创建数据编码后的指针
-    	let dataPointer = [UInt8](strData!)
+    	let dataPointer = UnsafeRawPointer((strData! as NSData).bytes)
     	// 获取转码后数据的长度
     	let dataLength = size_t(strData!.count)
     	// 将加密或解密的密钥转化为Data数据
@@ -166,12 +173,12 @@
     	    return nil
     	}
     	// 创建密钥的指针
-    	let keyPointer = [UInt8](keyData)
+    	let keyPointer = UnsafeRawPointer((keyData as NSData).bytes)
     	// 设置密钥的长度
     	let keyLength = cryptType.infoTuple.keyLength
 
     	// 创建加密或解密后的数据对象
-    	let cryptData = NSMutableData(length: Int(dataLength) + kCCBlockSize3DES)
+    	let cryptData = NSMutableData(length: Int(dataLength) + cryptType.infoTuple.digLength)
     	// 获取返回数据(cryptData)的指针
     	let cryptPointer = UnsafeMutableRawPointer(mutating: cryptData!.mutableBytes)
     	// 获取接收数据的长度
@@ -183,7 +190,7 @@
     	// 算法类型
     	let algoritm: CCAlgorithm = CCAlgorithm(cryptType.infoTuple.algorithm)
     	// 设置密码的填充规则（ PKCS7 & ECB 两种填充规则）
-    	let options:CCOptions = UInt32(kCCOptionPKCS7Padding)|UInt32(kCCOptionECBMode)
+    	let options:CCOptions = UInt32(kCCOptionPKCS7Padding) | UInt32(kCCOptionECBMode)
     	// 执行算法处理
     	let cryptStatus = CCCrypt(operation, algoritm, options, keyPointer, keyLength, nil, dataPointer, dataLength, cryptPointer, cryptDataLength, &cryptBytesLength)
     	// 结果字符串初始化
@@ -201,4 +208,5 @@
     }
 	```
 	
-	
+	[验证](http://tool.chacuo.net/cryptdes)     
+	[参考](https://www.jianshu.com/p/cab8f6ffb082)
