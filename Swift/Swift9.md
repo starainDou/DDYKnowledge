@@ -209,4 +209,6 @@
 	```
 	
 	[验证](http://tool.chacuo.net/cryptdes)     
-	[参考](https://www.jianshu.com/p/cab8f6ffb082)
+	[参考](https://www.jianshu.com/p/cab8f6ffb082)     
+	[参考](https://www.jianshu.com/p/940aaca1e3f6)    
+	[RSA加密](https://www.jianshu.com/p/d2cb314d30ec)    
