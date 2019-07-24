@@ -310,4 +310,17 @@
   	1、便利构造函数通常都是写在extension里面  
   	2、便利函数init前面需要加载convenience   
  	3、在便利构造函数中需要明确的调用self.init() 
+ 	
+ 	```
+ 	extension UILabel {
+   /// 便利构造器
+   convenience init(text: String, font: UIFont = UIFont.systemFont(ofSize: 12), textAlignment: NSTextAlignment = .center, numberOfLines: Int = 0) {
+		self.init()
+     	self.text = text
+     	self.font = font
+     	self.textAlignment = textAlignment
+     	self.numberOfLines = numberOfLines
+    	}
+	}
+ 	```
 		
