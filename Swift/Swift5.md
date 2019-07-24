@@ -330,3 +330,22 @@ let bytes = data.withUnsafeBytes {
 }
 print(bytes)
 ```
+
+
+封包与拆包
+
+* 拆包概念    
+	就是一个可选类型有值的时候，打印结果带有可选类型（Optional）标记，当我们去掉可选类型（Optional）的过程就成为拆包，例如：将Optional String类型强制转换为String类型的过程，就是一种拆包过程
+	
+* 强制拆包    
+	当我们在进行拆包过程中，如果对可选类型（Optional）是否有值不做处理，进行拆包的过程，就是一种强制拆包的过程，如果某一个可选类型（Optional）没有值，而我们又进行强制拆包的操作，就会崩溃(fatal error: unexpectedly found nil while unwrapping an Optional value) 
+
+* 封包    
+	简单来就是将一种确定的数据类型转换为可选类型（Optional）的过程，我们称之为封包。例如：将String类型转换为Optional String类型的过程，其实就是一种封包过程。
+	
+	
+pngData()和jpegData() 为nil
+
+文档中指明：May return nil if image has no CGImageRef or invalid bitmap format
+
+
