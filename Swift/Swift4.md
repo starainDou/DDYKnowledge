@@ -568,7 +568,7 @@ class ExtensionWhereTest: NSObject {
 
 
 
-	
+ [swift泛型整理](https://www.jianshu.com/p/36448c6312a3)  
 	   
  [.](https://www.runoob.com/swift/swift-extensions.html)    
  [.](https://www.jianshu.com/p/325aa6168013)
