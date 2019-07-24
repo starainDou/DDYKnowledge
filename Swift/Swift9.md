@@ -208,6 +208,36 @@
     }
 	```
 	
+	
+	CCCrypt 函数的介绍
+
+	1、参数1： 是指定加密还是解密的枚举类型（kCCEncrypt 、kCCDecrypt）     
+	2、参数2： 是指加密算法的类型。在CommonCryptor.h中提供了kCCAlgorithmAES128、kCCAlgorithmAES、kCCAlgorithmDES、kCCAlgorithm3DES、kCCAlgorithmCAST、kCCAlgorithmRC4、kCCAlgorithmRC2、kCCAlgorithmBlowfish等多种类型的加密算法    
+	3、 参数3：用来设置密码的填充规则（表示在使用密钥和算法对文本进行加密时的方法）的选项，该选项可以是kCCOptionPKCS7Padding或kCCOptionECBMode两者中的任一个    
+	4、参数4：密钥的数据指针    
+	5、参数5： 是密钥的长度 ，必须是 24 位    
+	6、参数6： 加密或者解密的偏移对象    
+	7、参数7： 要解密或者解密的数据指针对象   
+	8、参数8： 要解密或者解密的数据字符长度    
+	9、参数9： 加密或者解密的数据指针   
+	10、参数10： 接受加密或者解密的数据长度   
+	11、参数11： 这是加密或者解密的数据长度   
+	
+	
+	注意    
+	在加密或者解密的结果输出的时候，要重新设置接受解密或者加密的数据对象的长度为真实长度。
+
+	CCCrypt 的返回结果    
+	1、kCCSuccess	加解密操作正常结束    
+	2、kCCParamError 非法的参数值   
+	3、kCCBufferTooSmall 选项设置的缓存不够大   
+	4、kCCMemoryFailure 内存分配失败    
+	5、kCCAlignmentError 输入大小匹配不正确    
+	6、kCCDecodeError 输入数据没有正确解码或解密    
+	7、kCCUnimplemented 函数没有正确执行当前的算法   
+
+	
+	
 	[验证](http://tool.chacuo.net/cryptdes)     
 	[参考](https://www.jianshu.com/p/cab8f6ffb082)     
 	[参考](https://www.jianshu.com/p/940aaca1e3f6)    
