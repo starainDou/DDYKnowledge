@@ -303,8 +303,8 @@
 	
 	convenience
 	
-	- 指定构造方法: 没有convenience单词,必须对所有属性进行初始化
-	- 便利构造方法: 有convenience单词,不用对所有属性进行初始化，因为便利构造方法依赖于指定构造方法。
+	- 指定构造方法(Designated): 没有convenience单词,必须对所有属性进行初始化
+	- 便利构造方法(Convenience): 有convenience单词,不用对所有属性进行初始化，因为便利构造方法依赖于指定构造方法。
 	
 	便利构造函数的特点：  
   	1、便利构造函数通常都是写在extension里面  
