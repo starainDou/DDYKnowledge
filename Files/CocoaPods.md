@@ -66,6 +66,7 @@
 
 * 安装xcodeproj ``` sudo gem install xcodeproj ``` 
 * 安装cocoapods ``` sudo gem install cocoapods ```
+* 安装pre版 ``` sudo gem install cocoapods --pre ```
 * 执行setup ``` pod setup ```
 
 > #### 四、错误解决
