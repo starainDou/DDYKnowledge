@@ -19,7 +19,7 @@
 * 升级rvm
 	
 	1. 查看版本 ``` rvm --version ```
-	2. 升级RVM ``` \curl -L https://get.rvm.io | bash -s stable ```
+	2. 升级RVM ``` curl -L https://get.rvm.io | bash -s stable ```
 	3. 重载RVM ``` rvm reload ```
 	4. 查看版本 ``` rvm --version ```
 	5. 安装目录 ``` which rvm ```
@@ -218,6 +218,16 @@
 * 删除单个版本 ``` pod trunk delete PODNAME VERSION ```
 * 删除所有版本 ``` pod trunk deprecate PODNAME ``` (有提示回复y)
 
+> #### 六、卸载指定版本
+
+* 查看cocoapods相关安装 ``` gem list --local | grep cocoapods ```
+* 删除相关 ``` sudo gem uninstall cocoapods-deintegrate ```
+
+> #### 修改hosts加速
+
+* 前往 ``` /private/etc ```
+* 右击修改权限
+* 
 
 
 [cocoapods版本](https://rubygems.org/gems/cocoapods/versions)
