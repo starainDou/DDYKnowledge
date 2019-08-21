@@ -215,7 +215,7 @@
 * Trunk信息 ``` pod trunk me ```
 * 多人维护添加成员 ``` pod trunk add-owner ARAnalytics kyle@cocoapods.org ```
 * 发布到pod Trunck ``` pod trunk push DDYQRCode.podspec ```
-* 更新pod ``` pod setup ```
+* 如果必要的话更新pod ``` pod setup ```
 * 删除单个版本 ``` pod trunk delete PODNAME VERSION ```
 * 删除所有版本 ``` pod trunk deprecate PODNAME ``` (有提示回复y)
 
@@ -223,14 +223,16 @@
 
 * 查看cocoapods相关安装 ``` gem list --local | grep cocoapods ```
 * 删除相关 ``` sudo gem uninstall cocoapods-deintegrate ```
+* 移除指定 ``` sudo gem uninstall cocoapods -v 1.1.0 ```
 
-> #### 修改hosts加速
+> #### setup加速
 
-* 前往 ``` /private/etc ```
-* 右击修改权限
-* 
+pod repo remove master
+pod repo add master https://gitee.com/mirrors/CocoaPods-Specs
+pod repo update
 
 
 [cocoapods版本](https://rubygems.org/gems/cocoapods/versions)
 
 
+sudo gem update fourflusher
