@@ -7,7 +7,7 @@
 * [CocoaPods 安装管理与支持](https://github.com/starainDou/DDYKnowledge/blob/master/Files/CocoaPods.md)
 * [删除MacOSX系统的ABC输入法](https://github.com/starainDou/DDYKnowledge/blob/master/Files/DeleteSystemABC.md)
 * [主动退出App](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Exit.md)
-* [主动退出App](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Git.md)
+* [Git的使用](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Git.md)
 * [LineBreakMode 折行模式](https://github.com/starainDou/DDYKnowledge/blob/master/Files/LineBreakMode.md)
 * [nil/Nil/Null/NSNull](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Nil_nil_Null_NSNull.md)
 * [方法调用NSInvocation传多参(performSelector最多两个参数)](https://github.com/starainDou/DDYKnowledge/blob/master/Files/NSInvocation.md)
