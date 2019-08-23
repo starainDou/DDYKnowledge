@@ -872,9 +872,5 @@ Group queue 可以通过OC中 ``` dispatch_group_create()``` 或Swift中 ``` Dis
 [参考 多线程之GCD](https://blog.csdn.net/longshihua/article/details/50523051)   
 [参考 从使用场景了解GCD新API](https://www.jianshu.com/p/fc78dab5736f)   
 
-
-    
- [上一页 Swift5-转型 可选链 其他知识点](https://github.com/DDYSwift/LearnSwift/blob/master/Swift/Swift005.md)    
- [下一页 Swift7-高阶函数 map flatMap compactMap filter reduce](https://github.com/DDYSwift/LearnSwift/blob/master/Swift/Swift007.md)
   
   
