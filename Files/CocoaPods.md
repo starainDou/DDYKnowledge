@@ -1,3 +1,6 @@
+本文对应github地址[CocoaPods](https://github.com/starainDou/DDYKnowledge/blob/master/Files/CocoaPods.md),如果由于github调整导致资源找不到，请访问[github](https://github.com/starainDou/DDYKnowledge)
+
+
 > #### 一、源设置
 
 1. 查看源，终端输入: ``` sudo gem sources -l ```
