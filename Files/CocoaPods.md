@@ -23,9 +23,10 @@
 	
 	1. 查看版本 ``` rvm --version ```
 	2. 升级RVM ``` curl -L https://get.rvm.io | bash -s stable ```
-	3. 重载RVM ``` rvm reload ```
-	4. 查看版本 ``` rvm --version ```
-	5. 安装目录 ``` which rvm ```
+	3. 生效RVM ``` source ~/.rvm/scripts/rvm ```
+	4. 重载RVM ``` rvm reload ```
+	5. 查看版本 ``` rvm --version ```
+	6. 安装目录 ``` which rvm ```
 
 * 升级ruby
 
