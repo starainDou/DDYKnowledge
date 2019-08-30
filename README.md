@@ -4,6 +4,7 @@
 * [强制内联](https://github.com/starainDou/DDYKnowledge/blob/master/Files/AlwaysInline.md)
 * [batteryLevel 精准获取电量](https://github.com/starainDou/DDYKnowledge/blob/master/Files/BatteryLevel.md)
 * [BuildConfiguration 区分debug和release](https://github.com/starainDou/DDYKnowledge/blob/master/Files/BuildConfiguration.md)
+* [Chrome使用小知识](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Chrome.md)
 * [CocoaPods 安装管理与支持](https://github.com/starainDou/DDYKnowledge/blob/master/Files/CocoaPods.md)
 * [删除MacOSX系统的ABC输入法](https://github.com/starainDou/DDYKnowledge/blob/master/Files/DeleteSystemABC.md)
 * [主动退出App](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Exit.md)
