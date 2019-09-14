@@ -14,3 +14,7 @@
 > #### 打开全部下载列表
 
 * 地址栏输入 chrome://downloads 回车
+
+> #### 安装同一个账号其他设备上的扩展
+
+* [https://chrome.google.com/webstore/user/library](https://chrome.google.com/webstore/user/library)
