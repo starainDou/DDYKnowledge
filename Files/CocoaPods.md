@@ -231,12 +231,34 @@
 
 > #### setup加速
 
-pod repo remove master
-pod repo add master https://gitee.com/mirrors/CocoaPods-Specs
-pod repo update
+1. gitee镜像
+	
+	```
+	pod repo remove master   
+	pod repo add master https://gitee.com/mirrors/CocoaPods-Specs   
+	pod repo update   
+	```
+2. 清华镜像
 
 
-[cocoapods版本](https://rubygems.org/gems/cocoapods/versions)
+	```
+	pod repo remove master   
+	pod repo add master https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git   
+	pod repo update   
+	```
+
+3. Podfile要更改
+
+	```
+	source 'https://gitee.com/mirrors/CocoaPods-Specs   
+	.git'
+	source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
+	```
+
+> #### 参考
+
+* [cocoapods版本](https://rubygems.org/gems/cocoapods/versions)
+* [CocoaPods清华镜像使用帮助](https://mirrors.tuna.tsinghua.edu.cn/help/CocoaPods/)
 
 
-sudo gem update fourflusher
+<!-- sudo gem update fourflusher -->
