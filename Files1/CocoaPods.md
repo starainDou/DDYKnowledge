@@ -259,6 +259,7 @@
 
 * [cocoapods版本](https://rubygems.org/gems/cocoapods/versions)
 * [CocoaPods清华镜像使用帮助](https://mirrors.tuna.tsinghua.edu.cn/help/CocoaPods/)
+* [Ruby Gems 镜像使用帮助](https://mirrors.tuna.tsinghua.edu.cn/help/rubygems/)
 
 
 <!-- sudo gem update fourflusher -->
