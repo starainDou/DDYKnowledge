@@ -1,6 +1,8 @@
-本文对应github地址[iOS 13 问题解决以及苹果登录](https://github.com/starainDou/DDYKnowledge/blob/master/Files/iOS13.md),如果由于github调整导致资源找不到，请访问[github](https://github.com/starainDou/DDYKnowledge)
+本文对应github地址[iOS 13 问题解决以及苹果登录](https://github.com/starainDou/DDYKnowledge/blob/master/Files/iOS13.md),如果由于github调整导致资源找不到，请访问[github](https://github.com/starainDou/DDYKnowledge)     
 
-iOS 13 问题解决以及苹果登录
+本文直接搬砖，随便看看就行       
+
+iOS 13 问题解决以及苹果登录    
 
 * ##### KVC修改私有属性可能Crash(不是所有)，需要用别的姿势替代。
     
