@@ -8,8 +8,8 @@ iOS 13 问题解决以及苹果登录
 
 * ##### 模态弹出时 modalPresentationStyle 改变了默认值
  
- 在iOS13之前的版本中, UIViewController的UIModalPresentationStyle属性默认是UIModalPresentationFullScreen，而在iOS13中变成了UIModalPresentationPageSheet。
-所以我们需要在presentViewController时，设置一下UIModalPresentationStyle，就可以达到旧的效果。
+     在iOS13之前的版本中, UIViewController的UIModalPresentationStyle属性默认是UIModalPresentationFullScreen，而在iOS13中变成了UIModalPresentationPageSheet。     
+    所以我们需要在presentViewController时，设置一下UIModalPresentationStyle，就可以达到旧的效果。
 
 
 * ##### 获取DeviceToken姿势改变
