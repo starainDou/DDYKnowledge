@@ -4,11 +4,11 @@
 
 iOS 13 (Xcode11编译时)问题解决以及苹果登录    
 
-* ##### KVC修改私有属性可能Crash(不是所有，forKeyPath情况居多)，需要用别的姿势替代。
+* ##### KVC修改私有属性可能Crash(不是所有，不是所有，不是所有)，需要用别的姿势替代。
     
     
     
-    例如,UITextField的私有属性_placeholderLabel的字体颜色，
+    * ###### UITextField的私有属性_placeholderLabel的字体颜色，
     
     如果 ``` [textField setValue:color forKeyPath:@"_placeholderLabel.textColor"]; ``` 会crash。
     
@@ -37,6 +37,21 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     UILabel *placeholderLabel = object_getIvar(_textField, ivar);
     placeholderLabel.textColor = color;
     ```
+    
+    * ###### [searchBar valueForKey:@"_searchField"]; 取值崩溃
+
+    ```
+    - (UITextField *)ddy_SearchField {
+        if (@available(iOS 13.0, *)) {
+            return self.searchTextField;
+        } else {
+            return [self valueForKey:@"_searchField"];
+        }
+    }
+    ```
+    
+    所以修改UISearchBar占位字符可以把上面的结合使用
+    
 
 * ##### 模态弹出时 modalPresentationStyle 改变了默认值
  
@@ -51,7 +66,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     ```
     /// 一个一个改浪费时间，适合版本迭代中逐步替换；
     /// 直接重写-modalPresentationStyle 侵入性太大，造成系统弹出也被重置，或者某个控制器想改变样式都不能，不太友好
-    /// 所有用一个类方法控制全局，一个实例方法控制具体某个控制器实例样式。
+    /// 所以用一个类方法控制全局，一个实例方法控制具体某个控制器实例样式。
     
     #import <UIKit/UIKit.h>
     
@@ -137,10 +152,10 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     * iOS13之前
  
     ```
-    NSString *dt = [deviceToken description];
-    dt = [dt stringByReplacingOccurrencesOfString: @"<" withString: @""];
-    dt = [dt stringByReplacingOccurrencesOfString: @">" withString: @""];
-    dt = [dt stringByReplacingOccurrencesOfString: @" " withString: @""];
+    NSString * deviceToken = [deviceToken description];
+    deviceToken = [dt stringByReplacingOccurrencesOfString: @"<" withString: @""];
+    deviceToken = [dt stringByReplacingOccurrencesOfString: @">" withString: @""];
+    deviceToken = [dt stringByReplacingOccurrencesOfString: @" " withString: @""];
     ```
     * iOS13之后
 
@@ -403,16 +418,173 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     }
     ``` 
         
-* Flutter1.9.1+hotfix2 Dart2.5 在iOS13真机上启动不了 
 
-错误信息 Device doesn't support wireless sync. AMDeviceStartService(device, CFSTR("com.apple.debugserver"), &gdbfd, NULL)
+* ##### Flutter1.9.1+hotfix2 Dart2.5 在iOS13真机上启动不了 
 
-解决方案 
+    错误信息 Device doesn't support wireless sync. AMDeviceStartService(device, CFSTR("com.apple.debugserver"), &gdbfd, NULL)
+    
+    解决方案 
+    
+    如果是 Flutter + ios 13 + Mac Catalina 
+    
+    下载[文件](https://raw.githubusercontent.com/kangwang1988/kangwang1988.github.io/master/others/ios-deploy)
+    找到下载目录中该文件，控制台提权 ``` chmod +x ios-deploy ```
+    替换源文件 ``` mv ios-deploy /usr/local/Cellar/ios-deploy/1.9.4/bin ```
+    
+    如果Mac Mojave 暂时无解。。。
+    
+    
+* ##### 获取不到wifiSSID(wifi名)   
 
-如果是 Flutter + ios 13 + Mac Catalina 
+    ```
+    Dear Developer,
+    
+    As we announced at WWDC19, we're making changes to further protect user privacy and prevent unauthorized location tracking. Starting with iOS 13, the CNCopyCurrentNetworkInfo API will no longer return valid Wi-Fi SSID and BSSID information. Instead, the information returned by default will be: 
+    
+    SSID: “Wi-Fi” or “WLAN” (“WLAN" will be returned for the China SKU)
+    BSSID: "00:00:00:00:00:00" 
+    
+    If your app is using this API, we encourage you to adopt alternative approaches that don’t require Wi-Fi or network information. Valid SSID and BSSID information from CNCopyCurrentNetworkInfo will still be provided to VPN apps, apps that have used NEHotspotConfiguration to configure the current Wi-Fi network, and apps that have obtained permission to access user location through Location Services. 
+    
+    Test your app on the latest iOS 13 beta to make sure it works properly. If your app requires valid Wi-Fi SSID and BSSID information to function, you can do the following:
+    For accessory setup apps, use the NEHotSpotConfiguration API, which now has the option to pass a prefix of the SSID hotspot your app expects to connect to.
+    For other types of apps, use the CoreLocation API to request the user’s consent to access location information.
+    
+    Learn more by reading the updated documentation or viewing the the Advances in Networking session video from WWDC19. You can also submit a TSI for code-level support. 
+    
+    Best regards,
+    Apple Developer Relations
+    ```
 
-下载[文件](https://raw.githubusercontent.com/kangwang1988/kangwang1988.github.io/master/others/ios-deploy)
-找到下载目录中该文件，控制台提权 ``` chmod +x ios-deploy ```
-替换源文件 ``` mv ios-deploy /usr/local/Cellar/ios-deploy/1.9.4/bin ```
+    苹果为了所谓隐私安全不让直接获取到wifiSSID了，然后还告知,如果是使用 NEHotspotConfiguration 的app可以获取,另外其他类型app需要用CoreLocation请求位置权限，用户同意后才可以获取。
+    
+    * 使用NEHotspotConfiguration的app 
+    
+    ```
+    // 连接WiFi
+    NEHotspotConfiguration *config = [[NEHotspotConfiguration alloc] initWithSSID:@"wifi名" passphrase:@"密码" isWEP:NO];
+    NEHotspotConfigurationManager *manager = [NEHotspotConfigurationManager sharedManager];
+    [manager applyConfiguration: config completionHandler:^(NSError * _Nullable error) {
+        NSLog(@"error :%@",error);
+    }];
+    
+    // 获取wifiSSID 
+    - (NSString *)wifiSSID {
+        NSString *wifiSSID = nil;
+        
+        CFArrayRef wifiInterfaces = CNCopySupportedInterfaces();
+        
+        if (!wifiInterfaces) {
+            return nil;
+        }
+        
+        NSArray *interfaces = (__bridge NSArray *)wifiInterfaces;
+        
+        for (NSString *interfaceName in interfaces) {
+            CFDictionaryRef dictRef = CNCopyCurrentNetworkInfo((__bridge CFStringRef)(interfaceName));
+            if (dictRef) {
+                NSDictionary *networkInfo = (__bridge NSDictionary *)dictRef;
+                wifiSSID = [networkInfo objectForKey:(__bridge NSString *)kCNNetworkInfoKeySSID];
+                CFRelease(dictRef);
+            }
+        }
+        CFRelease(wifiInterfaces);
+        return wifiName;
+    }
+    ```
+    
+    * 请求位置权限征求用户同意后获取wifiSSID
+    
+    推荐使用封装好的请求权限方式[https://github.com/RainOpen/DDYAuthManager](https://github.com/RainOpen/DDYAuthManager)
+    
+    ```
+    #import <SystemConfiguration/CaptiveNetwork.h>
+    
+    - (void)ddy_wifiSSID:(void (^)(NSString *wifiSSID))wifiSSID {
+        
+        void (^callBack)(NSString *) = ^(NSString *wifiName) {
+            if (wifiSSID) {
+                wifiSSID(nil);
+            }
+        };
+        
+        void (^getWifiName)(void) = ^(){
+            CFArrayRef wifiInterfaces = CNCopySupportedInterfaces();
+            if (!wifiInterfaces) {
+                callBack(nil);
+                return;
+            }
+        
+            NSString *wifiName = nil;
+            for (NSString *interfaceName in (__bridge_transfer NSArray *)wifiInterfaces) {
+                CFDictionaryRef dictRef = CNCopyCurrentNetworkInfo((__bridge CFStringRef)(interfaceName));
+                if (dictRef) {
+                    NSDictionary *networkInfo = (__bridge NSDictionary *)dictRef;
+                    wifiName = [networkInfo objectForKey:(__bridge NSString *)kCNNetworkInfoKeySSID];
+                    CFRelease(dictRef);
+                }
+            }
+            CFRelease(wifiInterfaces);
+            callBack(wifiName);
+        };
+        
+        if ([CLLocationManager locationServicesEnabled]) {
+            [DDYAuthManager ddy_LocationAuthType:DDYCLLocationTypeAuthorized alertShow:YES success:^{
+                getWifiName();
+            } fail:^(CLAuthorizationStatus authStatus) {
+                NSLog(@"定位服务被拒绝，弹窗告诉无法获取wifiSSID，请到设置开启定位权限");
+                callBack(nil);
+            }];
+        } else {
+            NSLog(@"定位服务不可用");
+            callBack(nil);
+        }
+    }
+    ```
+    
+* ##### Xcode10往iOS13上编译运行提示 [Could not find Developer Disk Image](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Tip001.md)
 
-如果Mac Mojave 暂时无解。。。
+  1. 下载[开发包](https://www.lanzous.com/b923289)
+  2. 强制退出Xcode（必须退出干净）
+  3. 前往"/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport"粘贴解压缩文件(以自己实际路径实际名称)
+
+* ##### iOS 13 UITabBar上分割线呢操作
+
+    原来设置分割线的方式失效了
+    
+    ```
+    [[UITabBar appearance] setBackgroundImage:[UIImage new]];
+    [[UITabBar appearance] setShadowImage:[UIImage new]];
+    ```
+
+    最新更改TabBar上细线方式实例
+
+    ```
+    #import <objc/runtime.h>
+
+    - (void)viewDidAppear:(BOOL)animated {
+        [super viewDidAppear:animated];
+        UIView *bgView = [self.tabBar valueForKey:@"_backgroundView"];
+        if (@available(iOS 13, *)) {
+            Ivar ivar = class_getInstanceVariable([NSClassFromString(@"_UIBarBackground") class], "_shadowView1");
+            UIImageView *shadowView = object_getIvar(bgView, ivar);
+            shadowView.image = [self ddy_RectImageWithColor:[UIColor redColor] size:CGSizeMake(375, 1)];
+            shadowView.alpha = 0.01;
+            
+        } else {
+            [self.tabBar setBackgroundImage:[UIImage new]];
+            [self.tabBar setShadowImage:[UIImage new]];
+        }
+    }
+    // 生成一张图片
+    - (UIImage *)ddy_RectImageWithColor:(UIColor *)color size:(CGSize)size {
+        CGRect rect = CGRectMake(0, 0, size.width, size.height);
+        UIGraphicsBeginImageContext(rect.size);
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextSetFillColorWithColor(context, color.CGColor);
+        CGContextFillRect(context, rect);
+        UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        return img;
+    }
+    ```
