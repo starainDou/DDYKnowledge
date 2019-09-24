@@ -432,7 +432,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     找到下载目录中该文件，控制台提权 ``` chmod +x ios-deploy ```
     替换源文件 ``` mv ios-deploy /usr/local/Cellar/ios-deploy/1.9.4/bin ```
     
-    如果Mac Mojave 暂时无解。。。
+    如果Mac Mojave 暂时无解(等ios-deploy更新吧)。。。
     
     
 * ##### 获取不到wifiSSID(wifi名)   
