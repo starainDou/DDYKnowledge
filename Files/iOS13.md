@@ -40,15 +40,16 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     
     * ###### [searchBar valueForKey:@"_searchField"]; 取值崩溃
 
-    ```
-    - (UITextField *)ddy_SearchField {
-        if (@available(iOS 13.0, *)) {
-            return self.searchTextField;
-        } else {
-            return [self valueForKey:@"_searchField"];
-        }
-    }
-    ```
+	```
+	- (UITextField *)ddy_SearchField {
+		#ifdef __IPHONE_13_0
+		if (@available(iOS 13.0, *)) {
+	   		return self.searchTextField;
+		}
+		#endif
+		return [self valueForKey:@"_searchField"];
+	}
+	```
     
     所以修改UISearchBar占位字符可以把上面的结合使用
     
@@ -191,7 +192,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     
 * ##### UIWebView
 
-    * 苹果已经从iOS13禁止UIWebView方式了，需要更换WKWebView
+    * 苹果已经从iOS13禁止UIWebView方式了，需要更换WKWebView(过渡期仍可用，只是邮件警告，目前不影响审核)
     
 * ##### 即将废弃的 LaunchImage    
 
@@ -207,7 +208,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 
     * 低版本Xcode(如Xcode10)编译运行在iOS13上则会出现方框，如果用Xcode11编译则不会出现
         
-* ##### 增加苹果登录    
+* ##### 增加苹果登录(可选)    
 
 1. 去[开发者网站](https://developer.apple.com) 在 Sign in with Apple 开启功能
 2. Xcode 里面 Signing & Capabilities 开启 Sign in with Apple 功能
