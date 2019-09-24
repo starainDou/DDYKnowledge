@@ -558,34 +558,25 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     [[UITabBar appearance] setShadowImage:[UIImage new]];
     ```
 
-    最新更改TabBar上细线方式实例
+    最新更改TabBar上细线方式实例，利用苹果提供的新API，为所欲为(改图片，改颜色)
+    
+	```
+	if (@available(iOS 13, *)) {
+		#ifdef __IPHONE_13_0
+		UITabBarAppearance *appearance = [self.tabBar.standardAppearance copy];
+		appearance.backgroundImage = [UIImage new];
+		appearance.shadowImage = [UIImage imageNamed:@"Dotted_Line"];
+		appearance.shadowColor = [UIColor clearColor];
+		self.tabBar.standardAppearance = appearance;
+		#endif
+	} else {
+		self.tabBar.backgroundImage = [UIImage new];
+		self.tabBar.shadowImage = [UIImage imageNamed:@"Dotted_Line"];
+	}
+	```
 
-    ```
-    #import <objc/runtime.h>
+	
+* ##### 暗黑模式 
 
-    - (void)viewDidAppear:(BOOL)animated {
-        [super viewDidAppear:animated];
-        UIView *bgView = [self.tabBar valueForKey:@"_backgroundView"];
-        if (@available(iOS 13, *)) {
-            Ivar ivar = class_getInstanceVariable([NSClassFromString(@"_UIBarBackground") class], "_shadowView1");
-            UIImageView *shadowView = object_getIvar(bgView, ivar);
-            shadowView.image = [self ddy_RectImageWithColor:[UIColor redColor] size:CGSizeMake(375, 1)];
-            shadowView.alpha = 0.01;
-            
-        } else {
-            [self.tabBar setBackgroundImage:[UIImage new]];
-            [self.tabBar setShadowImage:[UIImage new]];
-        }
-    }
-    // 生成一张图片
-    - (UIImage *)ddy_RectImageWithColor:(UIColor *)color size:(CGSize)size {
-        CGRect rect = CGRectMake(0, 0, size.width, size.height);
-        UIGraphicsBeginImageContext(rect.size);
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextSetFillColorWithColor(context, color.CGColor);
-        CGContextFillRect(context, rect);
-        UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return img;
-    }
-    ```
+    * 关于暗黑模式也是开发者可选择性适配的内容，这里不赘述了，提供个文章参考
+    * [QiShare iOS13 DarkMode适配](https://juejin.im/post/5d889661e51d453b1e478b94)
