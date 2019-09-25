@@ -708,5 +708,9 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
    }
 	#endif
 	```
+*  WKWebView 中测量页面内容高度的方式变更
+
+    iOS 13以前 document.body.scrollHeight
+    iOS 13开始 document.documentElement.scrollHeight
 	
 * Xcode10的过时问题，[虫洞传送门](https://www.jianshu.com/p/af0f8400ff09)
