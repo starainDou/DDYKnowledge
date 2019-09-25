@@ -426,13 +426,16 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     
     解决方案 
     
-    如果是 Flutter + ios 13 + Mac Catalina 
+    更新Flutter到dev或master
     
-    下载[文件](https://raw.githubusercontent.com/kangwang1988/kangwang1988.github.io/master/others/ios-deploy)
-    找到下载目录中该文件，控制台提权 ``` chmod +x ios-deploy ```
-    替换源文件 ``` mv ios-deploy /usr/local/Cellar/ios-deploy/1.9.4/bin ```
-    
-    如果Mac Mojave 暂时无解(等ios-deploy更新吧)。。。
+    ```
+    flutter channel dev
+    // 或下面
+    // flutter channel master
+    // 然后执行
+    flutter doctor
+    // dart2.6 flutter1.10
+    ```
     
     
 * ##### 获取不到wifiSSID(wifi名)   
@@ -561,6 +564,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     最新更改TabBar上细线方式实例，利用苹果提供的新API，为所欲为(改图片，改颜色)
     
 	```
+	// OC
 	if (@available(iOS 13, *)) {
 		#ifdef __IPHONE_13_0
 		UITabBarAppearance *appearance = [self.tabBar.standardAppearance copy];
@@ -573,6 +577,18 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 		self.tabBar.backgroundImage = [UIImage new];
 		self.tabBar.shadowImage = [UIImage imageNamed:@"Dotted_Line"];
 	}
+	
+	// Swift
+	if #available(iOS 13, *) {
+  let appearance = self.tabBar.standardAppearance.copy()
+  appearance.backgroundImage = UIImage()
+  appearance.shadowImage = UIImage()
+  appearance.shadowColor = .clear
+  self.tabBar.standardAppearance = appearance
+} else {
+  self.tabBar.shadowImage = UIImage()
+  self.tabBar.backgroundImage = UIImage()
+}
 	```
 
 	
@@ -580,3 +596,117 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 
     * 关于暗黑模式也是开发者可选择性适配的内容，这里不赘述了，提供个文章参考
     * [QiShare iOS13 DarkMode适配](https://juejin.im/post/5d889661e51d453b1e478b94)
+
+* ###### library not found for -l stdc++.6.0.9
+
+	* Xcode10开始去除了C++6.0.9
+
+	* 如果非用不可，[下载文件](https://www.lanzous.com/i6e9c6h)
+	
+	```
+	// 文件夹 1、2、3、4 中的文件分别对应复制到Xcode10中的以下4个目录中即可(Xcode11目录可能有变更)
+	// 假设默认安装目录且Xcode.app命名
+	
+	/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/usr/lib/
+
+	/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/
+
+	/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/lib/
+
+	/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/lib/
+	```
+	
+	更新Xcode11目录变更
+	
+	```
+	/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/usr/lib/
+	↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 变更为 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+	/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime/Contents/Resources/RuntimeRoot/usr/lib/
+	```
+	
+	* 换个姿势试试
+	
+	```
+	1. TARGETS–Build Phases–Link Binary With Libraries，删除6.0.9依赖，
+	2. 需要的话对应添加libc++.tdb、libstdc++.tdb
+	3. TARGETS–Build Settings–Other Linker Flags，删除 -l”stdc++.6.0.9”
+	4. 如果是第三库引用了C++6.0.9库，那就只能联系服务方修改了
+	```
+* ###### Multiple commands produce 'xxx/Info.plist'
+
+	* Xcode10开始变更编译系统，如果项目所在空间存在多个Info.plist则报错
+
+	```
+	xcworkspace项目： Xcode左上角菜单栏 File –> Workspace Settings –> Build System – >Legacy Build System
+	xcodeproj项目：Xcode左上角菜单栏 –> File –> Project Settings –> Build System –> Legacy Build System
+	```
+	
+*  升级Xcode后xib报错 Failed to find or create execution context for description ...
+
+	* 可以万能重启，还可以。。。
+
+	```
+	sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService
+	
+	# 将你xcode中Developer文件夹位置放进来
+	sudo xcode-select -s  /Applications/Xcode.app/Contents/Developer
+	
+	xcrun simctl erase all
+	```
+	
+* 友盟导致崩溃 +[_LSDefaults sharedInstance]
+
+	* 更新版本
+	* 如果暂时没法更新(理由，我擦，屎山),临时方案[宇宙中转站→](https://www.jianshu.com/u/a4bc2516e9e5)
+
+	```
+	// 本工地大工没实际验证。。。
+	@implementation NSObject (DDYExtension)
+	
+	+ (void)changeOriginalSEL:(SEL)orignalSEL swizzledSEL:(SEL)swizzledSEL {
+	    Method originalMethod = class_getInstanceMethod([self class], orignalSEL);
+	    Method swizzledMethod = class_getInstanceMethod([self class], swizzledSEL);
+	    if (class_addMethod([self class], orignalSEL, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))) {
+	        class_replaceMethod([self class], swizzledSEL, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+	    } else {
+	        method_exchangeImplementations(originalMethod, swizzledMethod);
+	    }
+	}
+	
+	+ (void)load {
+	    static dispatch_once_t onceToken;
+	    dispatch_once(&onceToken, ^{
+	        SEL originalSEL = @selector(doesNotRecognizeSelector:);
+	        SEL swizzledSEL = @selector(ddy_doesNotRecognizeSelector:);
+	        [self changeOriginalSEL:originalSEL swizzledSEL:swizzledSEL];
+	    });
+	}
+	
+	+ (void)ddy_doesNotRecognizeSelector:(SEL)aSelector{
+		// 处理 _LSDefaults 崩溃问题
+		if([[self description] isEqualToString:@"_LSDefaults"] && (aSelector == @selector(sharedInstance))){
+	    	//冷处理...
+	    	return;
+		}
+		[self ddy_doesNotRecognizeSelector:aSelector];
+	}
+	```
+	
+* UITextField的leftView和rightView设置UIImageView或UIButton等被系统强(变)奸(窄)了。。。
+
+	* 临时解决方案，交换leftView/rightView的getter、setter，
+	* 然后包装一个containerView父视图，并将containerView给了相应左右视图
+	* 取视图则先取出containerView，从containerView中取出真正想要的视图
+	* 注意处理在containerView上的位置。。。		
+* UIScrollView滚动条指示器偏移
+
+	```
+	// 屏幕旋转可能会触发系统对滚动条的自动修正，如果没有修改需求，关闭该特性即可
+	#ifdef __IPHONE_13_0
+   if (@available(iOS 13.0, *)) {
+       self.automaticallyAdjustsScrollIndicatorInsets = NO;
+   }
+	#endif
+	```
+	
+* Xcode10的过时问题，[虫洞传送门](https://www.jianshu.com/p/af0f8400ff09)
