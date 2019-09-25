@@ -580,15 +580,15 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 	
 	// Swift
 	if #available(iOS 13, *) {
-  let appearance = self.tabBar.standardAppearance.copy()
-  appearance.backgroundImage = UIImage()
-  appearance.shadowImage = UIImage()
-  appearance.shadowColor = .clear
-  self.tabBar.standardAppearance = appearance
-} else {
-  self.tabBar.shadowImage = UIImage()
-  self.tabBar.backgroundImage = UIImage()
-}
+		let appearance = self.tabBar.standardAppearance.copy()
+		appearance.backgroundImage = UIImage()
+		appearance.shadowImage = UIImage()
+		appearance.shadowColor = .clear
+		self.tabBar.standardAppearance = appearance
+	} else {
+		self.tabBar.shadowImage = UIImage()
+		self.tabBar.backgroundImage = UIImage()
+	}
 	```
 
 	
