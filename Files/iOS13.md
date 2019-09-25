@@ -596,6 +596,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 
     * 关于暗黑模式也是开发者可选择性适配的内容，这里不赘述了，提供个文章参考
     * [QiShare iOS13 DarkMode适配](https://juejin.im/post/5d889661e51d453b1e478b94)
+    * [iOS13 暗黑模式(Dark Mode)适配之OC版](https://www.jianshu.com/p/0da3b107f06c)
 
 * ###### library not found for -l stdc++.6.0.9
 
@@ -712,5 +713,14 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 
     iOS 13以前 document.body.scrollHeight
     iOS 13开始 document.documentElement.scrollHeight
+
+* CBCenterManager 蓝牙使用权限
+    
+    iOS13之前不用申请权限，iOS13开始需要申请权限
+    
+    ```
+    <key>NSBluetoothAlwaysUsageDescription</key> 
+    <string>App想使用蓝牙，是否同意</string>`
+    ```
 	
 * Xcode10的过时问题，[虫洞传送门](https://www.jianshu.com/p/af0f8400ff09)
