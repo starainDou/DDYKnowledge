@@ -150,15 +150,17 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 
 * ##### 获取DeviceToken姿势改变
  
-    * iOS13之前
+    ###### iOS13之前
  
     ```
-    NSString * deviceToken = [deviceToken description];
-    deviceToken = [dt stringByReplacingOccurrencesOfString: @"<" withString: @""];
-    deviceToken = [dt stringByReplacingOccurrencesOfString: @">" withString: @""];
-    deviceToken = [dt stringByReplacingOccurrencesOfString: @" " withString: @""];
+    NSString *myToken = [deviceToken description];
+    myToken = [myToken stringByReplacingOccurrencesOfString: @"<" withString: @""];
+    myToken = [myToken stringByReplacingOccurrencesOfString: @">" withString: @""];
+    myToken = [myToken stringByReplacingOccurrencesOfString: @" " withString: @""];
     ```
-    * iOS13之后
+    ###### iOS13之后(不建议这样写)
+
+    [为什么不建议这样写](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622958-application?language=objc)APNs device tokens are of variable length. Do not hard-code their size
 
     ```
     - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -173,20 +175,32 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     ```
     
  
-    或者(两个一个样，变了个方式)
+    ###### 推荐的写法
     
     
-    ```
-    - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-        if (![deviceToken isKindOfClass:[NSData class]]) return;
-        NSMutableString * hexToken = [NSMutableString string];
-        const char *bytes = deviceToken.bytes;
-        NSInteger count = deviceToken.length;
-        for (int i = 0; i < count; i++) {
-            [hexToken appendFormat:@"%02x", bytes[i]&0x000000FF];
-        }
-    }
-    ```
+	```
+	- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+	    if (!deviceToken || ![deviceToken isKindOfClass:[NSData class]] || deviceToken.length==0) {
+	        return;
+	    }
+	    NSString *(^getDeviceToken)(void) = ^() {
+	        if (@available(iOS 13.0, *)) {
+	            const unsigned char *dataBuffer = (const unsigned char *)deviceToken.bytes;
+	            NSMutableString *myToken  = [NSMutableString stringWithCapacity:(deviceToken.length * 2)];
+	            for (int i = 0; i < deviceToken.length; i++) {
+	                [myToken appendFormat:@"%02x", dataBuffer[i]];
+	            }
+	            return (NSString *)[myToken copy];
+	        } else {
+	            NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"<>"];
+	            NSString *myToken = [[deviceToken description] stringByTrimmingCharactersInSet:characterSet];
+	            return [myToken stringByReplacingOccurrencesOfString:@" " withString:@""];
+	        }
+	    };
+	    NSString *myToken = getDeviceToken();
+	    NSLog(@"%@", myToken);
+	}
+	```
  
      
     
