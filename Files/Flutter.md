@@ -1,3 +1,5 @@
+> ## 命令
+
 * flutter --help 获取命令帮助 
 * flutter --version 打印版本(flutter版本和dart版本)
 * flutter channel 打印渠道(星号表示当前选中的渠道)
@@ -11,4 +13,13 @@
 * flutter uograde 升级通道channel和依赖包packages
 * flutter packages get 获取pubspec.yaml中所有的依赖关系
 * flutter packages upgrade 升级pubspec.yaml中所有的依赖
-* 
+* flutter emulators 列出所有可用模拟器(如apple_ios_simulator)
+* flutter devices 列出所有连接的真机
+* flutter create aaa_bbb 创建一个名为aaa_bbb的工程(只能下划线不能横线)
+* flutter emulator --launch apple_ios_simulator 启动模拟器
+* flutter run 运行工程
+
+> 库
+
+* 网络 dio
+* 数据库 [sqflite](https://pub.dartlang.org/packages/sqflite)
