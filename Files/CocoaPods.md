@@ -9,9 +9,9 @@
 4. 看是否真的添加上: ``` sudo gem sources -l ```
 5. 若出现 ``` https://gems.ruby-china.com ``` 则添加成功
 
-> #### 二、升级
+> #### 二、升级(按需选中执行)
 
-* 升级homebrew 
+* ##### 升级homebrew 
 
 	1. 查看版本 ``` brew --version ```
 	2. 卸载brew ``` ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)" ```  
@@ -19,7 +19,7 @@
 	4. 查看版本 ``` brew --version ``` 
 	5. 安装目录	 ``` which brew ```
 
-* 升级rvm
+* ##### 升级rvm
 	
 	1. 查看版本 ``` rvm --version ```
 	2. 升级RVM ``` curl -L https://get.rvm.io | bash -s stable ```
@@ -28,7 +28,7 @@
 	5. 查看版本 ``` rvm --version ```
 	6. 安装目录 ``` which rvm ```
 
-* 升级ruby
+* ##### 升级ruby
 
 	1. 查看版本 ``` ruby --version ```
 	2. 已知版本 ``` rvm list known ```
@@ -38,14 +38,14 @@
 	6. 删除多余 ``` rvm remove 2.0.0 ```
 	7. 安装目录 ``` which ruby ```
 
-* 手动安装ruby
+* ##### 手动安装ruby
 	
 	1. 下载ruby [ruby下载地址](http://www.ruby-lang.org/en/downloads/)
 	2. 进入解压文件夹执行 ``` ./configure ```
 	3. 编译 ``` sudo make ```
 	4. 安装 ``` sudo make install ```
 
-* 升级openssl 
+* ##### 升级openssl 
 	
 	1. 查看版本 ``` openssl version ```
 	2. 升级版本 ``` brew upgrade openssl ```
@@ -53,13 +53,13 @@
 	4. 查看版本 ``` openssl version ```
 	5. 安装目录 ``` which openssl ```
 
-* 升级gem
+* ##### 升级gem
 	
 	1. 查看版本 ``` gem --version ```
 	2. 升级版本 ``` gem update --system ``` 
 	3. 查看版本 ``` gem --version ```
 
-* 升级cocoaPods
+* ##### 升级cocoaPods
 	
 	1. 查看版本 ``` pod --version ```
 	2. 升级版本 ``` sudo gem update cocoapods ```
@@ -231,14 +231,14 @@
 
 > #### setup加速
 
-1. gitee镜像
+1. ##### gitee镜像
 	
 	```
 	pod repo remove master   
 	pod repo add master https://gitee.com/mirrors/CocoaPods-Specs   
 	pod repo update   
 	```
-2. 清华镜像
+2. ##### 清华镜像
 
 
 	```
@@ -247,7 +247,7 @@
 	pod repo update   
 	```
 
-3. Podfile要更改
+3. ##### iOS工程如果有Podfile要更改
 
 	```
 	source 'https://gitee.com/mirrors/CocoaPods-Specs   
