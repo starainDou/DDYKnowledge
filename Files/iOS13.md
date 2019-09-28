@@ -4,23 +4,23 @@
 
 iOS 13 (Xcode11编译时)问题解决以及苹果登录    
 
-* ##### KVC修改私有属性可能Crash(不是所有，不是所有，不是所有)，需要用别的姿势替代。
+* #### KVC修改私有属性可能Crash(不是所有，不是所有，不是所有)，需要用别的姿势替代。
     
     
     
-    * ###### UITextField的私有属性_placeholderLabel的字体颜色，
+    * ##### UITextField的私有属性_placeholderLabel的字体颜色，
     
-    如果 ``` [textField setValue:color forKeyPath:@"_placeholderLabel.textColor"]; ``` 会crash。
+    如 ``` [textField setValue:color forKeyPath:@"_placeholderLabel.textColor"]; ``` 会crash。
     
     那么该怎么办呢？下面提供几种姿势
     
-    姿势一：采用富文本形式 
+    ###### 姿势一：采用富文本形式 
     
     ``` 
     _textField.attributedPlaceholder = [[NSMutableAttributedString alloc] initWithString:placeholder attributes:@{NSForegroundColorAttributeName : color}];
     ```
     
-    姿势二：new方式创建一个新label（太low不建议用）
+    ###### 姿势二：new方式创建一个新label（太low不建议用）
     
     ```
     // 必须new创建，如果alloc-init创建还是crash(两种方式差别自行google，不是BD)
@@ -30,7 +30,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     [_textField setValue: placeholderLabel forKey:@"_placeholderLabel"];//new创建这里并没有crash
     ```
     
-    姿势三：Runtime
+    ###### 姿势三：Runtime
     
     ```
     Ivar ivar = class_getInstanceVariable([UITextField class], "_placeholderLabel");
@@ -38,7 +38,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     placeholderLabel.textColor = color;
     ```
     
-    * ###### [searchBar valueForKey:@"_searchField"]; 取值崩溃
+    * ##### [searchBar valueForKey:@"_searchField"]; 取值崩溃
 
 	```
 	- (UITextField *)ddy_SearchField {
@@ -54,7 +54,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     所以修改UISearchBar占位字符可以把上面的结合使用
     
 
-* ##### 模态弹出时 modalPresentationStyle 改变了默认值
+* #### 模态弹出时 modalPresentationStyle 改变了默认值
  
      * 在iOS13之前的版本中, UIViewController的UIModalPresentationStyle属性默认是UIModalPresentationFullScreen，而在iOS13中变成了UIModalPresentationPageSheet。     
     * 我们需要在presentViewController时，设置一下UIModalPresentationStyle，就可以达到旧的效果。
@@ -148,9 +148,9 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     ```
 
 
-* ##### 获取DeviceToken姿势改变
+* #### 获取DeviceToken姿势改变
  
-    ###### iOS13之前
+    ##### iOS13之前
  
     ```
     NSString *myToken = [deviceToken description];
@@ -158,7 +158,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     myToken = [myToken stringByReplacingOccurrencesOfString: @">" withString: @""];
     myToken = [myToken stringByReplacingOccurrencesOfString: @" " withString: @""];
     ```
-    ###### iOS13之后(不建议这样写)
+    ##### iOS13之后(不建议这样写)
 
     [为什么不建议这样写](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622958-application?language=objc)APNs device tokens are of variable length. Do not hard-code their size
 
@@ -175,7 +175,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     ```
     
  
-    ###### 推荐的写法
+    ##### 推荐的写法
     
     
 	```
@@ -204,25 +204,25 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
  
      
     
-* ##### UIWebView
+* #### UIWebView
 
     * 苹果已经从iOS13禁止UIWebView方式了，需要更换WKWebView(过渡期仍可用，只是邮件警告，目前不影响审核)
     
-* ##### 即将废弃的 LaunchImage    
+* #### 即将废弃的 LaunchImage    
 
     * 从iOS 8 苹果引入了 LaunchScreen，我们可以设置LaunchScreen来作为启动页。当然，现在你还可以使用LaunchImage来设置启动图。不过使用LaunchImage的话，要求我们必须提供各种屏幕尺寸的启动图，来适配各种设备，随着苹果设备尺寸越来越多，这种方式显然不够 Flexible。而使用 LaunchScreen的话，情况会变的很简单， LaunchScreen是支持AutoLayout+SizeClass的，所以适配各种屏幕都不在话下。
     * 从2020年4月开始，所有使⽤ iOS13 SDK的 App将必须提供 LaunchScreen，LaunchImage即将退出历史舞台。
 
 
-* ##### MPMoviePlayerController 被禁止
+* #### MPMoviePlayerController 被禁止
 
     * 这个用的人应该不多了，如果是则更换姿势，如用AVPlayer
 
-* ##### UITableViewCell中cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;方框问题
+* #### UITableViewCell中cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;方框问题
 
     * 低版本Xcode(如Xcode10)编译运行在iOS13上则会出现方框，如果用Xcode11编译则不会出现
         
-* ##### 增加苹果登录(可选)    
+* #### 增加苹果登录(可选)    
 
 1. 去[开发者网站](https://developer.apple.com) 在 Sign in with Apple 开启功能
 2. Xcode 里面 Signing & Capabilities 开启 Sign in with Apple 功能
@@ -432,9 +432,9 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
         }
     }
     ``` 
-        
+ 10. [官方Demo](https://docs-assets.developer.apple.com/published/80ac09c84c/AddingTheSignInWithAppleFlowToYourApp.zip)       
 
-* ##### Flutter1.9.1+hotfix2 Dart2.5 在iOS13真机上启动不了 
+* #### Flutter1.9.1+hotfix2 Dart2.5 在iOS13真机上启动不了 
 
     错误信息 Device doesn't support wireless sync. AMDeviceStartService(device, CFSTR("com.apple.debugserver"), &gdbfd, NULL)
     
@@ -452,7 +452,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     ```
     
     
-* ##### 获取不到wifiSSID(wifi名)   
+* #### 获取不到wifiSSID(wifi名)   
 
     ```
     Dear Developer,
@@ -476,7 +476,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 
     苹果为了所谓隐私安全不让直接获取到wifiSSID了，然后还告知,如果是使用 NEHotspotConfiguration 的app可以获取,另外其他类型app需要用CoreLocation请求位置权限，用户同意后才可以获取。
     
-    * 使用NEHotspotConfiguration的app 
+    * ##### 使用NEHotspotConfiguration的app 
     
     ```
     // 连接WiFi
@@ -511,7 +511,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     }
     ```
     
-    * 请求位置权限征求用户同意后获取wifiSSID
+    * ##### 请求位置权限征求用户同意后获取wifiSSID
     
     推荐使用封装好的请求权限方式[https://github.com/RainOpen/DDYAuthManager](https://github.com/RainOpen/DDYAuthManager)
     
@@ -559,14 +559,15 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
         }
     }
     ```
+    * ##### VPN旧版应用
     
-* ##### Xcode10往iOS13上编译运行提示 [Could not find Developer Disk Image](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Tip001.md)
+* #### Xcode10往iOS13上编译运行提示 [Could not find Developer Disk Image](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Tip001.md)
 
   1. 下载[开发包](https://www.lanzous.com/b923289)
   2. 强制退出Xcode（必须退出干净）
   3. 前往"/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport"粘贴解压缩文件(以自己实际路径实际名称)
 
-* ##### iOS 13 UITabBar上分割线呢操作
+* #### iOS 13 UITabBar上分割线呢操作
 
     原来设置分割线的方式失效了
     
@@ -606,13 +607,13 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 	```
 
 	
-* ##### 暗黑模式 
+* #### 暗黑模式 
 
     * 关于暗黑模式也是开发者可选择性适配的内容，这里不赘述了，提供个文章参考
     * [QiShare iOS13 DarkMode适配](https://juejin.im/post/5d889661e51d453b1e478b94)
     * [iOS13 暗黑模式(Dark Mode)适配之OC版](https://www.jianshu.com/p/0da3b107f06c)
 
-* ###### library not found for -l stdc++.6.0.9
+* ##### library not found for -l stdc++.6.0.9
 
 	* Xcode10开始去除了C++6.0.9
 
@@ -647,7 +648,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 	3. TARGETS–Build Settings–Other Linker Flags，删除 -l”stdc++.6.0.9”
 	4. 如果是第三库引用了C++6.0.9库，那就只能联系服务方修改了
 	```
-* ###### Multiple commands produce 'xxx/Info.plist'
+* #### Multiple commands produce 'xxx/Info.plist'
 
 	* Xcode10开始变更编译系统，如果项目所在空间存在多个Info.plist则报错
 
@@ -656,7 +657,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 	xcodeproj项目：Xcode左上角菜单栏 –> File –> Project Settings –> Build System –> Legacy Build System
 	```
 	
-*  升级Xcode后xib报错 Failed to find or create execution context for description ...
+* #### 升级Xcode后xib报错 Failed to find or create execution context for description ...
 
 	* 可以万能重启，还可以。。。
 
@@ -669,10 +670,10 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 	xcrun simctl erase all
 	```
 	
-* 友盟导致崩溃 +[_LSDefaults sharedInstance]
+* #### 友盟导致崩溃 +[_LSDefaults sharedInstance]
 
 	* 更新版本
-	* 如果暂时没法更新(理由，我擦，屎山),临时方案[宇宙中转站→](https://www.jianshu.com/u/a4bc2516e9e5)
+	* 如果暂时没法更新(理由，我擦，屎山),临时方案[宇宙中转站→Saylor_lone博客:iOS 13 适配 ING...](https://juejin.im/post/5d89dc766fb9a06b0e54d251)
 
 	```
 	// 本工地大工没实际验证。。。
@@ -707,7 +708,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 	}
 	```
 	
-* UITextField的leftView和rightView设置UIImageView或UIButton等被系统强(变)奸(窄)了。。。
+* #### UITextField的leftView和rightView设置UIImageView或UIButton等被系统强(变)奸(窄)了。。。
 
 	* 临时解决方案，交换leftView/rightView的getter、setter，
 	* 然后包装一个containerView父视图，并将containerView给了相应左右视图
@@ -737,4 +738,19 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     <string>App想使用蓝牙，是否同意</string>`
     ```
 	
-* Xcode10的过时问题，[虫洞传送门](https://www.jianshu.com/p/af0f8400ff09)
+* #### Xcode10的过时问题，[虫洞传送门](https://www.jianshu.com/p/af0f8400ff09)
+
+* #### Xcode11 创建新工程在AppDelegate.m中设置window不生效
+
+    * Xcode11把入口交给了scene(为SwiftUI多场景打基础的)
+    * 想要换回AppDelegate入口
+    * 打开Info.plist点击减号删除Application Scene Mainfest
+    * 再删除SceneDelegate两个文件
+    * 删除AppDelegate.m中UISceneSession lifecycle两个方法
+    * 最后AppDelegate.h中添加 @property (strong, nonatomic) UIWindow *window;
+
+    
+> ##### 参考
+
+* [iOS 13 适配 ING...](https://juejin.im/post/5d89dc766fb9a06b0e54d251)
+* [iOS13 [UIViewController presentViewController]样式适配](https://juejin.im/post/5d5f96866fb9a06b0517f78c)
