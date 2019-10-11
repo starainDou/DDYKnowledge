@@ -621,11 +621,26 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 		self.tabBar.backgroundImage = UIImage()
 	}
 	```
-
+* #### iOS 13 Push后Pop回来tabbar选中文字颜色变系统蓝色(OC代码，swift一个样)
+	
+	* ##### 姿势一
+	
+	```
+	self.tabBar.tinColor = color;
+	```
+	
+	* ##### 姿势二
+	
+	```
+	if (@available(iOS 10.0, *)) {
+		self.tabBar.unselectedItemTintColor = color;
+	}
+	```
 	
 * #### 暗黑模式 
 
     * 关于暗黑模式也是开发者可选择性适配的内容，这里不赘述了，提供个文章参考
+    * 不想适配暗黑则在Info.plist中添加Key:User Interface Style，值String的Light
     * [QiShare iOS13 DarkMode适配](https://juejin.im/post/5d889661e51d453b1e478b94)
     * [iOS13 暗黑模式(Dark Mode)适配之OC版](https://www.jianshu.com/p/0da3b107f06c)
 
