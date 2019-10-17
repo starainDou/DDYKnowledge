@@ -1,4 +1,4 @@
-> ## 基础命令含义
+> #### 基础命令含义
 
 * clone 克隆远程仓库
 * init 初始化仓库
@@ -14,11 +14,11 @@
 * diff 对比版本内容
 * merge 合并版本内容
 
-> ## 使用前配置
+> #### 使用前配置
 
-* 设置基本信息
+* ##### 设置基本信息
 	
-	初始化仓库
+	###### 初始化仓库
 	
 	```
 	# 在项目中创建.git文件
@@ -26,7 +26,7 @@
 	
 	```
 	
-	设置信息	
+	###### 设置信息	
 	
 	```
 	# 建议局部配置(防止因为不同Email导致无法正常生成记录)
@@ -46,7 +46,7 @@
 	# 配置选项有三种：–system，–global 和 –local
 	```
 	
-	创建忽略文件
+	###### 创建忽略文件
 	
 	```
 	touch .gitignore
@@ -80,20 +80,20 @@
 	#Pods
 	```
 	
-	将项目中所有修改过的工作文件提交暂存区
+	###### 将项目中所有修改过的工作文件提交暂存区
 	
 	```
 	# 注意空格
 	git add .
 	```
 	
-	提交新增内容
+	###### 提交新增内容
 	
 	```
 	git commit -m 'git初始化操作'
 	```
 	
-	密钥管理
+	###### 密钥管理
 	
 	```
 	# 检查 SSH key 是否存在
@@ -114,7 +114,7 @@
 	# 将copy的key添加到远程git的配置中
 	```
 	
-	本地关联远程
+	###### 本地关联远程
 	
 	```
 	# git remote add 仓库名称 仓库地址
@@ -122,19 +122,19 @@
 	
 	```
 	
-	查看仓库名称
+	###### 查看仓库名称
 	
 	```
 	git remote
 	```
 	
-	将origin仓库推送到master分支
+	###### 将origin仓库推送到master分支
 	
 	```
 	git push origin master
 	```
 	
-	回到指定版本
+	###### 回到指定版本
 	
 	```
 	# 回到当前版本
@@ -147,7 +147,7 @@
 	git reset --hard 1234567
 	```
 	
-	日志信息
+	###### 日志信息
 	
 	```
 	# 查看日志版本信息
@@ -156,13 +156,13 @@
 	git reflog
 	```
 	
-	查看项目的提交状态
+	###### 查看项目的提交状态
 	
 	```
 	git status
 	```
 	
-	差异化
+	###### 差异化
 	
 	```
 	git diff <file> # 比较当前文件和暂存区文件差异 git diff
@@ -172,10 +172,22 @@
 	git diff --cached # 比较暂存区和版本库差异
 	git diff --stat # 仅仅比较统计信息
 	```
+
+> #### SourceTree设置忽略文件不生效问题
+
+* 点击工程管理界面右上角终端按钮
+* 删除缓存(注意有个实心点) ``` git rm -r --cached . ```
+* 本工程忽略文件：点击右上角设置->高级->编辑gitignore
+* 全局忽略文件：点击左上角菜单SourceTree->首选项(可能有的交偏好设置)->Git->编辑文件
+* git add .
+* git commit -m 'ignore something'
+
+
+
+> #### 参考	
 	
-	
-	[参考](https://git-scm.com/book/zh/v1/自定义-Git-配置-Git)    
-	[参考](http://www.cocoachina.com/articles/21163)    
-	[参考](https://blog.csdn.net/hmh007/article/details/50726318)   
-	[参考](https://www.jianshu.com/p/f46aa9d0dc43)
-	[git自动补全](https://github.com/git/git/tree/35f6318d44379452d8d33e880d8df0267b4a0cd0/contrib/completion)    
+* [参考](https://git-scm.com/book/zh/v1/自定义-Git-配置-Git)
+* [参考](http://www.cocoachina.com/articles/21163)    
+* [参考](https://blog.csdn.net/hmh007/article/details/50726318)   
+* [参考](https://www.jianshu.com/p/f46aa9d0dc43)
+* [git自动补全](https://github.com/git/git/tree/35f6318d44379452d8d33e880d8df0267b4a0cd0/contrib/completion)    
