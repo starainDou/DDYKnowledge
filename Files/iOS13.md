@@ -741,10 +741,27 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 	
 * #### UITextField的leftView和rightView设置UIImageView或UIButton等被系统强(变)奸(窄)了。。。
 
-	* 临时解决方案，交换leftView/rightView的getter、setter，
-	* 然后包装一个containerView父视图，并将containerView给了相应左右视图
-	* 取视图则先取出containerView，从containerView中取出真正想要的视图
-	* 注意处理在containerView上的位置。。。		
+	* ##### 姿势一：临时解决方案
+		* 交换leftView/rightView的getter、setter，
+		* 然后包装一个containerView父视图，并将containerView给了相应左右视图
+		* 取视图则先取出containerView，从containerView中取出真正想要的视图
+		* 注意处理在containerView上的位置。。。
+	
+	* ##### 姿势二：通用型方案
+		
+		* 想全局更改，交换 -leftViewRectForBounds: (最好留出控制属性以在外部随意更改玩转)
+		* 如果采用子类，重写 -leftViewRectForBounds:
+		
+		```
+		- (CGRect)leftViewRectForBounds:(CGRect)bounds {
+		    CGRect iconRect = [super leftViewRectForBounds:bounds];
+		    iconRect.origin.x = 3; // 可用属性控制 
+		    iconRect.size.width = 6; // 可用属性控制 
+		    return iconRect;
+		}	
+		```
+	
+			
 * UIScrollView滚动条指示器偏移
 
 	```
