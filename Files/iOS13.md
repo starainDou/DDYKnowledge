@@ -223,6 +223,7 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 * #### UIWebView
 
     * 苹果已经从iOS13禁止UIWebView方式了，需要更换WKWebView(过渡期仍可用，只是邮件警告，目前不影响审核)
+    * UIWebView 无缝转WKWebView 正在开发中，请添加关注随时发布!!!
     
 * #### 即将废弃的 LaunchImage    
 
