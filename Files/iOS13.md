@@ -457,7 +457,17 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     
     解决方案 
     
-    更新Flutter到dev或master
+    * 姿势一:
+    
+    更新[Flutter](https://flutter.cn/docs/get-started/install/macos)
+    
+    ```
+    flutter upgrade
+    ```
+    
+    * 姿势二:
+    
+    暂时切换到dev或master
     
     ```
     flutter channel dev
