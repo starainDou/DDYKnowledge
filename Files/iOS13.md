@@ -64,104 +64,112 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
 
     UIViewController+DDYPresent.h[下载该文件](https://raw.githubusercontent.com/starainDou/DDYCategory/master/DDYCategory/DDYCategory/DDYCategory/UIKit/UIViewController%2BDDYPresent.h)
     
-    ```
-    /// 一个一个改浪费时间，适合版本迭代中逐步替换；
-    /// 直接重写-modalPresentationStyle 侵入性太大，造成系统弹出也被重置，或者某个控制器想改变样式都不能，不太友好
-    /// 所以用一个类方法控制全局，一个实例方法控制具体某个控制器实例样式。
-    
-    #import <UIKit/UIKit.h>
-    
-    NS_ASSUME_NONNULL_BEGIN
-    
-    @interface UIViewController (DDYPresent)
-    
-    /// 如果以后迭代版本想全部用系统原来样式，统一返回NO即可
-    /// rentrn BOOL UIImagePickerController/UIAlertController is NO，others is YES
-    + (BOOL)ddy_GlobalAutoSetModalPresentationStyle;
-    
-    /// 具体某个控制器不想更改了(想用系统默认)设置NO
-    /// return BOOL [Class ddy_GlobalAutoSetModalPresentationStyle];
-    @property (nonatomic, assign) BOOL ddy_AutoSetModalPresentationStyle;
-    
-    @end
-    
-    NS_ASSUME_NONNULL_END
-    
-    ```
+	```
+	/// 一个一个改浪费时间，适合版本迭代中逐步替换；
+	/// 直接重写-modalPresentationStyle 侵入性太大，造成系统弹出也被重置，或者某个控制器想改变样式都不能，不太友好
+	/// 所以用一个类方法控制全局，一个实例方法控制具体某个控制器实例样式。
+	    
+	#import <UIKit/UIKit.h>
+	
+	NS_ASSUME_NONNULL_BEGIN
+	
+	@interface UIViewController (DDYPresent)
+	
+	/// 自动调整模态弹出样式时要排除的控制器(如果未设置则使用内置)
+	/// @param controllerNameArray 模态弹出的控制器名称数组
+	+ (void)ddy_ExcludeControllerNameArray:(NSArray<NSString *> *)controllerNameArray;
+	
+	/// 是否自动调整模态弹出全屏样式
+	/// NO:表示不自动调整，保持默认，可能全屏样式也可能其他样式
+	/// YES:表示调整为全屏样式
+	/// 如果是排除的控制器数组包含的控制器则默认NO
+	/// 如果不在排除的控制器数组内包含则默认YES
+	@property (nonatomic, assign) BOOL ddy_AutoSetModalPresentationStyleFullScreen;
+	
+	@end
+	
+	NS_ASSUME_NONNULL_END
+	    
+	```
     
     UIViewController+DDYPresent.m[下载该文件](https://raw.githubusercontent.com/starainDou/DDYCategory/master/DDYCategory/DDYCategory/DDYCategory/UIKit/UIViewController%2BDDYPresent.m)
     
     
-    ```
-    #import "UIViewController+DDYPresent.h"
-    #import <objc/runtime.h>
-    #import <StoreKit/StoreKit.h>
-#import <SafariServices/SafariServices.h>
-    
-    @implementation UIViewController (DDYPresent)
-    
-    + (void)changeOriginalSEL:(SEL)orignalSEL swizzledSEL:(SEL)swizzledSEL {
-        Method originalMethod = class_getInstanceMethod([self class], orignalSEL);
-        Method swizzledMethod = class_getInstanceMethod([self class], swizzledSEL);
-        if (class_addMethod([self class], orignalSEL, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))) {
-            class_replaceMethod([self class], swizzledSEL, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
-        } else {
-            method_exchangeImplementations(originalMethod, swizzledMethod);
-        }
-    }
-    
-    + (void)load {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            SEL originalSEL = @selector(presentViewController:animated:completion:);
-            SEL swizzledSEL = @selector(ddy_PresentViewController:animated:completion:);
-            [self changeOriginalSEL:originalSEL swizzledSEL:swizzledSEL];
-        });
-    }
-    
-    - (void)ddy_PresentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
-        if (@available(iOS 13.0, *)) {
-            if (viewControllerToPresent.ddy_AutoSetModalPresentationStyle) {
-                viewControllerToPresent.modalPresentationStyle = UIModalPresentationFullScreen;
-            }
-        }
-        [self ddy_PresentViewController:viewControllerToPresent animated:flag completion:completion];
-    }
-    
-    - (void)setDdy_AutoSetModalPresentationStyle:(BOOL)ddy_AutoSetModalPresentationStyle {
-        objc_setAssociatedObject(self, @selector(ddy_AutoSetModalPresentationStyle), @(ddy_AutoSetModalPresentationStyle), OBJC_ASSOCIATION_ASSIGN);
-    }
-    
-    - (BOOL)ddy_AutoSetModalPresentationStyle {
-        NSNumber *obj = objc_getAssociatedObject(self, @selector(ddy_AutoSetModalPresentationStyle));
-        return obj ? [obj boolValue] : [self.class ddy_GlobalAutoSetModalPresentationStyle];
-    }
-    
-    // MARK: 排除一些系统控制器
-    + (BOOL)ddy_GlobalAutoSetModalPresentationStyle {
-	    if ([self isKindOfClass:[UIImagePickerController class]]) {
-	        return NO;
-	    } else if ([self isKindOfClass:[UIAlertController class]]) {
-	        return NO;
-	    } else if ([self isKindOfClass:[UIActivityViewController class]]) {
-	        return NO;
-	    } else if ([self isKindOfClass:[UIDocumentInteractionController class]]) {
-	        return NO;
-	    } else if ([self isKindOfClass:[SFSafariViewController class]]) {
-	           return NO;
+	```
+	#import "UIViewController+DDYPresent.h"
+	#import <objc/runtime.h>
+	
+	@implementation UIViewController (DDYPresent)
+	
+	static NSArray *excludeControllerNameArray;
+	
+	+ (void)changeOriginalSEL:(SEL)orignalSEL swizzledSEL:(SEL)swizzledSEL {
+	    Method originalMethod = class_getInstanceMethod([self class], orignalSEL);
+	    Method swizzledMethod = class_getInstanceMethod([self class], swizzledSEL);
+	    if (class_addMethod([self class], orignalSEL, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))) {
+	        class_replaceMethod([self class], swizzledSEL, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+	    } else {
+	        method_exchangeImplementations(originalMethod, swizzledMethod);
 	    }
-    #ifdef __IPHONE_10_3
-	    else if ([self isKindOfClass:[SKStoreReviewController class]]) {
-	        return NO;
-	    } else if ([self isKindOfClass:[SKStoreProductViewController class]]) {
-	        return NO;
+	}
+	
+	+ (void)load {
+	    static dispatch_once_t onceToken;
+	    dispatch_once(&onceToken, ^{
+	        SEL originalSEL = @selector(presentViewController:animated:completion:);
+	        SEL swizzledSEL = @selector(ddy_PresentViewController:animated:completion:);
+	        [self changeOriginalSEL:originalSEL swizzledSEL:swizzledSEL];
+	    });
+	}
+	
+	- (void)ddy_PresentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
+	    if (@available(iOS 13.0, *)) {
+	        if (viewControllerToPresent.ddy_AutoSetModalPresentationStyleFullScreen) {
+	            viewControllerToPresent.modalPresentationStyle = UIModalPresentationFullScreen;
+	        }
 	    }
-    #endif
-	    return YES;
-    }
-    
-    @end
-    ```
+	    [self ddy_PresentViewController:viewControllerToPresent animated:flag completion:completion];
+	}
+	
+	- (void)setDdy_AutoSetModalPresentationStyleFullScreen:(BOOL)ddy_AutoSetModalPresentationStyleFullScreen {
+	    objc_setAssociatedObject(self, @selector(ddy_AutoSetModalPresentationStyleFullScreen), @(ddy_AutoSetModalPresentationStyleFullScreen), OBJC_ASSOCIATION_ASSIGN);
+	}
+	
+	- (BOOL)ddy_AutoSetModalPresentationStyleFullScreen {
+	    NSNumber *obj = objc_getAssociatedObject(self, @selector(ddy_AutoSetModalPresentationStyleFullScreen));
+	    return obj ? [obj boolValue] : ![UIViewController ddy_IsExcludeSetModalPresentationStyleFullScreen:NSStringFromClass(self.class)];
+	}
+	
+	// MARK: - 类方法
+	// MARK: 全局设置排除的控制器
+	+ (void)ddy_ExcludeControllerNameArray:(NSArray<NSString *> *)controllerNameArray {
+	    excludeControllerNameArray = controllerNameArray;
+	}
+	
+	// MARK: 如果没有外部设置则使用内置的排除数组
+	+ (NSArray<NSString *> *)ddy_InnerExcludeControllerNameArray {
+	    NSMutableArray *nameArray = [NSMutableArray array];
+	    [nameArray addObject:@"UIImagePickerController"];
+	    [nameArray addObject:@"UIAlertController"];
+	    [nameArray addObject:@"UIActivityViewController"];
+	    [nameArray addObject:@"UIDocumentInteractionController"];
+	    [nameArray addObject:@"SLComposeViewController"]; //  #import <Social/Social.h>
+	    [nameArray addObject:@"SLComposeServiceViewController"]; // #import <Social/Social.h>
+	    [nameArray addObject:@"UIMenuController"];
+	    [nameArray addObject:@"SFSafariViewController"]; // API_AVAILABLE(ios(9.0)) #import <SafariServices/SafariServices.h>
+	    [nameArray addObject:@"SKStoreReviewController"]; // API_AVAILABLE(ios(10.3), macos(10.14)) #import <StoreKit/StoreKit.h>
+	    [nameArray addObject:@"SKStoreProductViewController"]; // API_AVAILABLE(ios(6.0)) #import <StoreKit/StoreKit.h>
+	    return nameArray;
+	}
+	
+	// MARK: 是否是要排除自动设置的控制器
+	+ (BOOL)ddy_IsExcludeSetModalPresentationStyleFullScreen:(NSString *)className {
+	    NSArray *nameArray = excludeControllerNameArray ?: [UIViewController ddy_InnerExcludeControllerNameArray];
+	    return [nameArray containsObject:className];
+	}
+	
+	@end    
+	```
 
 
 * #### 获取DeviceToken姿势改变
