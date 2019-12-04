@@ -1,5 +1,7 @@
 本文对应github地址[iOS 13 问题解决以及苹果登录](https://github.com/starainDou/DDYKnowledge/blob/master/Files/iOS13.md),如果由于github调整导致资源找不到或细节更改，请访问[github](https://github.com/starainDou/DDYKnowledge)     
 
+[本文掘金地址](https://juejin.im/post/5d85c3fde51d453b7779d604) 
+
 本文直接搬砖，随便看看就行       
 
 iOS 13 (Xcode11编译时)问题解决以及苹果登录    
