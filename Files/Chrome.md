@@ -18,3 +18,17 @@
 > #### 安装同一个账号其他设备上的扩展
 
 * [https://chrome.google.com/webstore/user/library](https://chrome.google.com/webstore/user/library)
+
+> #### 扩展镜像打包下载
+
+* [扩展迷](https://extfans.com)
+* [gugeapps](https://gugeapps.net)
+* [极简插件](http://chrome.zzzmh.cn)
+
+> #### 一些好用的插件
+
+* 访问谷歌服务[谷歌访问助手]()
+* 标签页美化[Infinity Pro]
+* Github美化目录[Octotree]()
+* 资源嗅探[猫抓]()
+* 开发工具集[开发工具箱]()
