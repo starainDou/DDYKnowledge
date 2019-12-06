@@ -104,39 +104,57 @@ sudo vim /etc/hosts
 然后强制退出终端或者重启大法
 ```
 
-#### 编译openssl和ffmpeg
-
-1. 进入ios目录执行
+去除armv7引入
 
 ```
-./compile-openssl.sh clean
-./compile-ffmpeg.sh clean
-```
-
-2. 进入ijkplayer-ios目录执行
-
-```
-// 下载openssl
-./init-ios-openssl.sh
-
-// 下载ffmpeg
-./init-ios.sh
-```
-
-3. 进入ios目录执行
-
-```
-// 编译openssl
-./compile-openssl.sh all
-
-// 编译ffmpeg
-./compile-ffmpeg.sh all
-```
-
 /build/universal/include/libavutil/avconfig.h:34 
 去掉行 include "armv7/avconfig.h"
 
 /build/universal/include/libffmpeg/config.h:34
 去掉行 include "armv7/config.h"
+```
 
-./compile-ffmpeg.sh all x86_64 编译单个指令集
+#### 选择支持的解码配置
+
+1. 进入 config 目录，删除当前的 module.sh 文件 
+
+
+	``` 
+	rm module.sh 
+	```
+	
+2. 创建软链接 module.sh 指向 module-lite-hevc.sh
+
+	```
+	ln -s module-lite-hevc.sh module.sh
+	```
+
+#### 编译openssl和ffmpeg
+
+1. 进入ios目录执行
+
+	```
+	./compile-openssl.sh clean
+	./compile-ffmpeg.sh clean
+	```
+
+2. 进入ijkplayer-ios目录执行
+
+	```
+	// 下载openssl
+	./init-ios-openssl.sh
+	
+	// 下载ffmpeg
+	./init-ios.sh
+	```
+
+3. 进入ios目录执行
+
+	```
+	// 编译openssl
+	./compile-openssl.sh all
+	
+	// 编译ffmpeg
+	./compile-ffmpeg.sh all
+	// ./compile-ffmpeg.sh all x86_64 编译单个指令集
+	```
