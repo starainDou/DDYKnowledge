@@ -598,11 +598,12 @@ iOS 13 (Xcode11编译时)问题解决以及苹果登录
     ```
     * ##### VPN旧版应用
     
-* #### Xcode10往iOS13上编译运行提示 [Could not find Developer Disk Image](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Tip001.md)
+* #### Xcode真机调试包 [Could not find Developer Disk Image](https://github.com/starainDou/DDYKnowledge/blob/master/Files/Tip001.md)
 
   1. 下载[开发包](https://www.lanzous.com/b923289)
   2. 强制退出Xcode（必须退出干净）
   3. 前往"/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport"粘贴解压缩文件(以自己实际路径实际名称)
+  4. 如果找不到相应真机调试包可以尝试修改文件名
 
 * #### iOS 13 UITabBar上分割线呢操作
 
