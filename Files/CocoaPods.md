@@ -188,6 +188,7 @@
 	
 * 执行 ``` pod install --verbose --no-repo-update ```     
 * 需要更新才用此步骤，更新 ``` pod update --verbose --no-repo-update ``` 
+* 若新tag没拉取下来就删除缓存 ``` ~/Library/Caches/CocoaPods/Pods/Release ```
 
 > #### 五、让自己的库支持cocoapods管理
 
