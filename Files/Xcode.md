@@ -74,4 +74,9 @@
 * 跳入: Command + Alt + I
 * 跳出: Command + Alt + T
 
+> #### 一些默认路径
+
+* 快捷代码段 Libary/Developer/Xcode/UserData/CodeSnippets
+* 真机调试包 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
+
 <!--https://www.jianshu.com/p/4dd914b93555-->
