@@ -287,9 +287,11 @@ sizeof(abc)=16
 
 <!-- iOS 内存字节对齐 https://www.jianshu.com/p/3294668e2d8c -->
 
+> #### OC对象
+
 ##### NSObject对象
 
-OC对象本身是一个带有指向其类别isa指针的结构体。
+OC对象的本质就是一个带有指向其类别isa指针的objc_object类型的结构体
 
 NSObject在系统中的定义
 
@@ -304,9 +306,15 @@ NSObject在系统中的定义
 @end
 ```
 
-转换为C++
+转换为C++的相关代码
 
 ```
+struct objc_object {
+    Class _Nonnull isa __attribute__((deprecated));
+};
+
+typedef struct objc_object NSObject;
+
 struct NSObject_IMPL {
 	Class isa;
 };
@@ -428,6 +436,7 @@ instanceSize:32 malloc_size:32 liLei
 ```
 
 自定义对象大小最小为16字节，且采用8字节对齐；分配内存最小16字节，且采用16字节对齐
+
 
 ##### OC对象分类
 
