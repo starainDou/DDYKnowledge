@@ -184,10 +184,11 @@
 
 
 
-> #### 参考	
+> #### 附	
 	
 * [参考](https://git-scm.com/book/zh/v1/自定义-Git-配置-Git)
 * [参考](http://www.cocoachina.com/articles/21163)    
 * [参考](https://blog.csdn.net/hmh007/article/details/50726318)   
 * [参考](https://www.jianshu.com/p/f46aa9d0dc43)
-* [git自动补全](https://github.com/git/git/tree/35f6318d44379452d8d33e880d8df0267b4a0cd0/contrib/completion)    
+* [git自动补全](https://github.com/git/git/tree/35f6318d44379452d8d33e880d8df0267b4a0cd0/contrib/completion)  
+* [gitforwindows淘宝镜像](http://npm.taobao.org/mirrors/git-for-windows/)
