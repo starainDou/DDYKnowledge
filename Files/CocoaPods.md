@@ -251,8 +251,7 @@
 3. ##### iOS工程如果有Podfile要更改
 
 	```
-	source 'https://gitee.com/mirrors/CocoaPods-Specs   
-	.git'
+	source 'https://gitee.com/mirrors/CocoaPods-Specs.git'
 	source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
 	```
 
