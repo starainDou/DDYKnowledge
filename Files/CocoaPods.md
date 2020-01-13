@@ -228,7 +228,7 @@
 
 * 查看cocoapods相关安装 ``` gem list --local | grep cocoapods ```
 * 删除相关 ``` sudo gem uninstall cocoapods-deintegrate ```
-* 移除指定 ``` sudo gem uninstall cocoapods -v 1.1.0 ```
+* 移除指定 ``` sudo gem uninstall cocoapods -v 1.7.5 ```
 
 > #### setup加速
 
@@ -251,8 +251,7 @@
 3. ##### iOS工程如果有Podfile要更改
 
 	```
-	source 'https://gitee.com/mirrors/CocoaPods-Specs   
-	.git'
+	source 'https://gitee.com/mirrors/CocoaPods-Specs.git'
 	source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
 	```
 
