@@ -13,4 +13,24 @@
 
 > #### adb命令
 
-https://www.runoob.com/w3cnote/android-tutorial-development-environment-build.html 
+* windows上需要配置环境变量
+
+1. 新建 ``` ANDROID_HOME ```环境变量，添加SDK地址(如 D:\Android\android_sdks)
+2. 更新Path环境变量，添加 ``` % ANDROID_HOME%\tools ```
+
+* 一些命令
+
+1. 安装软件: adb install [-r] xx.apk -r:重装
+2. 卸载软件: adb uninstall [-k] <包名> -k:保留数据和缓存目录
+3. 取出手机文件: adb pull xxx.xxx
+4. 发送文件到手机: adb push xxx.xxx
+5. 进入手机终端: adb shell
+6. 列出所有连接的设备: adb devices
+7. 重启adb: adb:reset adb
+8. 杀死adb: adb kill-server
+9. 启动adb: adb start-server
+10. 查看端口号占用的进程: netstat -ano
+
+
+[adb常用命令小结](https://zhuanlan.zhihu.com/p/68571291)
+[菜鸟教程](https://www.runoob.com/) 
