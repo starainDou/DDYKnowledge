@@ -172,6 +172,21 @@
 	git diff --cached # 比较暂存区和版本库差异
 	git diff --stat # 仅仅比较统计信息
 	```
+	
+	###### 设置代理
+	
+	```
+	# socks5代理
+	git config --global http.proxy 'socks5://127.0.0.1:1080' 
+	git config --global https.proxy 'socks5://127.0.0.1:1080'
+	// http/https 代理
+	git config --global https.proxy http://127.0.0.1:1080
+	git config --global https.proxy https://127.0.0.1:1080
+	
+	#取消
+	git config --global --unset http.proxy
+	git config --global --unset https.proxy
+	```
 
 > #### SourceTree设置忽略文件不生效问题
 
