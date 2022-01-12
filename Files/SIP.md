@@ -9,3 +9,9 @@
 3. 输入 ```csrutil disable``` 来禁用 SIP 保护机制；
 4. 重启系统
 5. 如果想重新开启按上述步骤，然后执行 ```csrutil enable```
+
+# App已损坏，无法打开
+
+```
+sudo xattr -rd com.apple.quarantine /Applications/MyApp.app
+```

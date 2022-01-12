@@ -1,4 +1,4 @@
-> #### 键盘符号
+> ### 键盘符号
 
 
 * ⌘ Command / Cmd
@@ -12,7 +12,7 @@
 * ↑ top
 * ↓ down
 
-> #### 快捷键
+> ### 快捷键
 
 ##### 文件
 
@@ -74,9 +74,68 @@
 * 跳入: Command + Alt + I
 * 跳出: Command + Alt + T
 
-> #### 一些默认路径
+> ### 一些默认路径
 
 * 快捷代码段 Libary/Developer/Xcode/UserData/CodeSnippets
 * 真机调试包 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
+
+> ### Error
+
+1. 签名问题
+```
+object file format unrecognized, invalid, or unsuitable
+/usr/bin/codesign failed with exit code 1
+```
+解决方案
+```
+sudo mv /usr/bin/codesign_allocate /usr/bin/codesign_allocate_old
+sudo ln -s ...Xcode.app/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate /usr/bin
+```
+
+> ### 优化
+
+// 不每次重复全量编译
+user-defined HEADERMAP_USES_VFS YES
+
+// Command PhaseScriptExecution failed with a nonzero exit code
+SWIFT_ENABLE_BATCH_MODE NO
+
+
+> ### 打包前添加Action判断是否release
+
+Edit Scheme -> Archive -> Pre-actions -> New Run Script Action -> provide build setting from
+
+```
+if [ $CONFIGURATION != "Release" ]; then
+
+osascript -e 'tell app "Xcode" to display dialog "正在非Release打包！当前环境'$CONFIGURATION'"'
+
+fi
+```
+
+> ### 打包前自增build号
+
+[持续集成时指定构建号](https://www.jianshu.com/p/eba178ee4150)
+
+```
+if [ $CONFIGURATION == Release ]; then
+    echo "Bumping build number..."
+    plist=${PROJECT_DIR}/${INFOPLIST_FILE}
+
+# increment the build number (ie 115 to 116)
+    buildnum=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "${plist}")
+    if [[ "${buildnum}" == "" ]]; then
+        echo "No build number in $plist"
+        exit 2
+    fi
+
+    buildnum=$(expr $buildnum + 1)
+    /usr/libexec/Plistbuddy -c "Set CFBundleVersion $buildnum" "${plist}"
+    echo "Bumped build number to $buildnum"
+
+else
+    echo $CONFIGURATION " build - Not bumping build number."
+fi
+```
 
 <!--https://www.jianshu.com/p/4dd914b93555-->

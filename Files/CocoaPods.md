@@ -28,6 +28,10 @@
 	5. 查看版本 ``` rvm --version ```
 	6. 安装目录 ``` which rvm ```
 
+	```
+	rvm use ruby-3.0.0
+	```
+
 * ##### 升级ruby
 
 	1. 查看版本 ``` ruby --version ```
@@ -52,6 +56,11 @@
 	3. 链接新版 ``` brew link openssl --force ```
 	4. 查看版本 ``` openssl version ```
 	5. 安装目录 ``` which openssl ```
+
+```
+$ echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' >> ~/.zshrc
+$ source ~/.zshrc
+```
 
 * ##### 升级gem
 	
@@ -260,6 +269,7 @@
 * [cocoapods版本](https://rubygems.org/gems/cocoapods/versions)
 * [CocoaPods清华镜像使用帮助](https://mirrors.tuna.tsinghua.edu.cn/help/CocoaPods/)
 * [Ruby Gems 镜像使用帮助](https://mirrors.tuna.tsinghua.edu.cn/help/rubygems/)
+* [编写podspec文件](https://segmentfault.com/a/1190000012269307)
 
 
 <!-- sudo gem update fourflusher -->

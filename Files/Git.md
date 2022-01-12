@@ -198,6 +198,37 @@
 * git commit -m 'ignore something'
 
 
+> #### 修改已提交但未推送的message
+
+```
+Git bush中执行命令 git commit --amend
+然后直接修改备注保存即可。
+保存方式：
+1）按Esc退出编辑
+2）输入 :wq （保存并退出）
+不保存退出输入 :q!
+```
+
+> #### 删除已经提交但未推送的更改
+
+```
+撤销git commit，撤销git add，保留编辑器改动代码 git reset --mixed HEAD~1
+撤销git commit，撤销git add，保留编辑器改动代码 git reset --soft HEAD~1
+撤销git commit，撤销git add，删除编辑器改动代码 git reset --hard HEAD~1
+```
+
+> #### 从零开始关联提交到git
+
+```
+mkdir images
+cd images
+git init
+touch README.md
+git add README.md // git add .
+git commit -m "first commit"
+git remote add origin https://gitee.com/rainopen/images.git
+git push -u origin master
+```
 
 > #### 附	
 	
@@ -207,3 +238,5 @@
 * [参考](https://www.jianshu.com/p/f46aa9d0dc43)
 * [git自动补全](https://github.com/git/git/tree/35f6318d44379452d8d33e880d8df0267b4a0cd0/contrib/completion)  
 * [gitforwindows淘宝镜像](http://npm.taobao.org/mirrors/git-for-windows/)
+* [如何删除未推送的git commit？](https://blog.csdn.net/asdfgh0077/article/details/103596340) 
+* [Git删除已提交但未推送的commit](https://blog.csdn.net/u013986317/article/details/107106702)

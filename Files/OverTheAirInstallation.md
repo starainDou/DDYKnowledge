@@ -157,4 +157,4 @@
 </plist>
 ```
 
-
+[Java读取apk、ipa包名、版本名、版本号、图标等信息](https://www.cnblogs.com/wjp1122/p/8984163.html)
