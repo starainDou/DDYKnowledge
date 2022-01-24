@@ -58,9 +58,19 @@
 	5. 安装目录 ``` which openssl ```
 
 ```
-$ echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' >> ~/.zshrc
+$ echo 'export PATH="/usr/local/opt/openssl@3.0/bin:$PATH"' >> ~/.zshrc
 $ source ~/.zshrc
 ```
+
+```
+If you need to have openssl@3 first in your PATH, run:
+  echo 'export PATH="/usr/local/opt/openssl@3/bin:$PATH"' >> ~/.zshrc
+
+For compilers to find openssl@3 you may need to set:
+  export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
+  export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
+```
+https://luckyframework.org/guides/getting-started/installing
 
 * ##### 升级gem
 	
@@ -152,6 +162,11 @@ $ source ~/.zshrc
 * 搜索不到存在的某个库(特别是刚提交的)
 
 	执行 ``` rm /Users/zsl/Library/Caches/CocoaPods/search_index.json ``` zsl改成自己的
+	
+* SSL: no alertnative certificate subject name matches target host name "github.com"
+
+git config --global http.sslVerify false
+
 
 > #### 四、使用cocoaPods
 
