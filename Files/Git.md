@@ -154,6 +154,9 @@
 	git log
 	# 查看日志七位版本号及回退信息
 	git reflog
+	
+	
+	git log --author='豆电雨' --after='2020-8-16' --before='2020-8-24'
 	```
 	
 	###### 查看项目的提交状态
@@ -240,3 +243,4 @@ git push -u origin master
 * [gitforwindows淘宝镜像](http://npm.taobao.org/mirrors/git-for-windows/)
 * [如何删除未推送的git commit？](https://blog.csdn.net/asdfgh0077/article/details/103596340) 
 * [Git删除已提交但未推送的commit](https://blog.csdn.net/u013986317/article/details/107106702)
+* [macOS 升级 Git 版本](https://www.jianshu.com/p/6eca0eadcc22)
