@@ -1,0 +1,5 @@
+* [iOS计算网络测试中的丢包率，延迟，下载速度等参数、iOS实现ping](https://blog.csdn.net/yingms/article/details/46238407)
+* [SimplePing](https://developer.apple.com/library/mac/samplecode/SimplePing/Listings/SimplePing_m.html)
+* [STPingTest](https://github.com/lovesunstar/STPingTest)
+* [OC iOS-netdiag](https://github.com/qiniu/iOS-netdiag)
+* [Swift  LPNetdiag](https://github.com/liam-i/LPNetdiag)
