@@ -138,4 +138,22 @@ else
 fi
 ```
 
+> ### Xcode objectVersion
+
+```
+https://www.rubydoc.info/github/CocoaPods/Xcodeproj/Xcodeproj/Constants
+
+56 => 'Xcode 14.0',
+55 => 'Xcode 13.0',
+54 => 'Xcode 12.0',
+53 => 'Xcode 11.4',
+52 => 'Xcode 11.0',
+51 => 'Xcode 10.0',
+50 => 'Xcode 9.3',
+48 => 'Xcode 8.0',
+47 => 'Xcode 6.3',
+46 => 'Xcode 3.2',
+45 => 'Xcode 3.1',
+```
+
 <!--https://www.jianshu.com/p/4dd914b93555-->
