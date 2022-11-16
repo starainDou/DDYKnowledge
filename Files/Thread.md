@@ -866,6 +866,73 @@ Group queue 可以通过OC中 ``` dispatch_group_create()``` 或Swift中 ``` Dis
 	}
 	```
 
+NSBlockOperation
+
+```
+-(void)downloadImagAndCompoundIma{
+ 
+     /*
+      获取图片属性1：搞两个属性 然后self.img1, self.img2
+      获取图片属性2: 使用__blcok修饰，
+      */
+     __block UIImage *ima1 = [[UIImage alloc] init];
+     __block UIImage *ima2 = [[UIImage alloc] init];
+ 
+     //1.创建 非主队列
+     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+ 
+     //2.创建任务 : 下载图片1
+     NSBlockOperation *op1 =  [NSBlockOperation blockOperationWithBlock:^{
+ 
+         NSString *urlStr = [NSString stringWithFormat:@"http://pic.90sjimg.com/design/00/07/85/23/58ef8faf71ffe.png"];
+         NSURL *url = [NSURL URLWithString:urlStr];
+         NSData *data = [NSData dataWithContentsOfURL:url];
+         ima1 = [UIImage imageWithData:data];
+     }];
+ 
+     //3.创建任务 : 下载图片2
+     NSBlockOperation * op2 = [NSBlockOperation blockOperationWithBlock:^{
+         // 下载图片
+         NSString *urlStr = [NSString stringWithFormat:@"http://pic28.nipic.com/20130330/9607253_143631959000_2.png"];
+         NSURL *url = [NSURL URLWithString:urlStr];
+         NSData *data = [NSData dataWithContentsOfURL:url];
+         ima2 = [UIImage imageWithData:data];
+     }];
+ 
+     //4.合成图片
+     NSBlockOperation *op3 = [NSBlockOperation blockOperationWithBlock:^{
+         //1。开启图形上下文 并且设置上下文 宽高
+         UIGraphicsBeginImageContext(CGSizeMake(, ));
+ 
+         //2.图片画图
+         [ima1 drawInRect:CGRectMake(, , , )];
+         ima1 = nil;
+ 
+         [ima2 drawInRect:CGRectMake(, , , )];
+         ima2 = nil;
+ 
+         //3.根据图形上下文去图片
+         UIImage *ima = UIGraphicsGetImageFromCurrentImageContext();
+ 
+         //4.关闭上下文
+         UIGraphicsEndImageContext();
+         //3.回到主线程刷新UI
+         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+             self.imageView.image = ima;
+         }];
+     }];
+ 
+     //5.添加依赖，因为全都是异步执行 谁先谁后不可控
+     [op3 addDependency:op1];
+     [op3 addDependency:op2];
+ 
+     //3.添加任务
+     [queue addOperation:op1];
+     [queue addOperation:op2];
+     [queue addOperation:op3];
+ }
+```
+
 	
 [参考 Swift4 - GCD的使用](https://blog.csdn.net/longshihua/article/details/79756676)    
 [参考 Swift4.0 - GCD](https://www.jianshu.com/p/96032a032c7c)    
