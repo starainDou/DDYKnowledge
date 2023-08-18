@@ -18,6 +18,54 @@
 	3. 安装brew ``` ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" ```
 	4. 查看版本 ``` brew --version ``` 
 	5. 安装目录	 ``` which brew ```
+	6. 查看源
+	```
+	git -C "$(brew --repo)" remote get-url origin
+git -C "$(brew --repo homebrew/core)" remote get-url origin 
+git -C "$(brew --repo homebrew/cask)" remote get-url origin 
+	```
+	
+	8.修改源
+	
+```
+	git -C "$(brew --repo)" remote set-url origin 'https://github.com/Homebrew/brew.git'
+git -C "$(brew --repo homebrew/core)" remote set-url origin 'https://github.com/Homebrew/homebrew-core.git'
+git -C "$(brew --repo homebrew/cask)" remote set-url origin 'https://github.com/Homebrew/homebrew-cask.git'
+
+brew update
+
+
+安装软件：brew install xxx
+
+卸载软件: brew uninstall xxx
+
+搜索软件:brew search xxx
+
+查看列表:brew list
+
+更新brew:brew update
+
+清理所有包的旧版本:brew cleanup
+
+清理指定包的旧版本：brew cleanup $formula
+
+查看可清理的旧版本包 brew cleanup -n
+```
+
+```
+github源 
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+
+国内镜像
+/bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)"
+/bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/HomebrewUninstall.sh)"
+
+git config --global --add safe.directory /opt/homebrew/Library/Taps/homebrew/homebrew-core
+git config --global --add safe.directory /opt/homebrew/Library/Taps/homebrew/homebrew-cask
+
+https://blog.csdn.net/ohalo/article/details/128589914
+```
 
 * ##### 升级rvm
 	
@@ -36,10 +84,10 @@
 
 	1. 查看版本 ``` ruby --version ```
 	2. 已知版本 ``` rvm list known ```
-	3. 安装指定 ``` rvm install 2.6.3 ``` 或者 ``` rvm install ruby-2.6.3 ```
+	3. 安装指定 ``` rvm install 2.7.2 ``` 或者 ``` rvm install ruby-2.7.2 ```
 	4. 已安列别 ``` rvm list ```
-	5. 设定默认 ``` rvm use 2.6.3 --default ```
-	6. 删除多余 ``` rvm remove 2.0.0 ```
+	5. 设定默认 ``` rvm use 2.7.2 --default ```
+	6. 删除多余 ``` rvm remove 2.7.2 ```
 	7. 安装目录 ``` which ruby ```
 
 * ##### 手动安装ruby
@@ -88,11 +136,24 @@ https://luckyframework.org/guides/getting-started/installing
 > #### 三、安装
 
 * 安装xcodeproj ``` sudo gem install xcodeproj ``` 
-* 安装cocoapods ``` sudo gem install cocoapods ```
-* 安装pre版 ``` sudo gem install cocoapods --pre ```
+* 安装cocoapods ``` sudo gem install cocoapods  --user-install  或者 brew install cocoapods```
+* 安装pre版 ``` sudo gem install cocoapods --pre  ```
 * 执行setup ``` pod setup ```
+* 移除 ``` sudo gem uninstall cocoapods ```
+* cocoapods-core (1.11.3)
+cocoapods-deintegrate (1.0.5)
+cocoapods-downloader (1.6.3)
+cocoapods-plugins (1.0.0)
+cocoapods-search (1.0.1)
+cocoapods-trunk (1.6.0)
+cocoapods-try (1.2.0)
 
 > #### 四、错误解决
+
+终极方案是执行卸载 Homebrew脚本【海外、国内】
+执行卸载ruby
+执行卸载cocoapods
+删除 .rvm .cocoapods 
 	
 * 权限问题  
 
