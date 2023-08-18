@@ -29,3 +29,15 @@ ArtificialIntelligence
 * [open ar foundation https://arcloudfoundation.org/](https://arcloudfoundation.org/)
 * [https://gsdex.org/](https://gsdex.org/)
 * [EasyAR https://www.easyar.cn](https://www.easyar.cn)
+
+> ChatGPT、VITS、
+* [VITS-fast-fine-tuning](https://github.com/Plachtaa/VITS-fast-fine-tuning)
+* [【VITS/语音合成】贝露丹蒂语音模型文件分享](https://xbeibeix.com/video/BV1WY4y1X7Qx)
+* [讯飞语音](https://www.xfyun.cn/doc/tts/online_tts/iOS-SDK.html)
+* [huggingface.co](https://huggingface.co/spaces?sort=likes&search=vits)
+* [vits-chatgpt-live2d-unity-wife](https://gitee.com/DammonSpace/vits-chatgpt-live2d-unity-wife)
+* [Bilibili  vits-chatgpt-live2d-unity-wife](https://www.bilibili.com/video/BV14L411U7J2/?vd_source=ced8d5357fe915a3115227c1fe98ea47)
+* [Vits-Android-ncnn](https://github.com/weirdseed/Vits-Android-ncnn)
+* [AI 唱歌](https://github.com/svc-develop-team/so-vits-svchttps://github.com/svc-develop-team/so-vits-svc)
+* [AI唱歌也算AI，sovits 唱歌项目使用分享](https://ngabbs.com/read.php?tid=35678209&rand=231)
+* [基于PP-TTS的安卓手机部署](https://aistudio.baidu.com/aistudio/projectdetail/5382080)
