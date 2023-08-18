@@ -38,5 +38,55 @@ u0009 CHARACTER TABULATION u000A LINE FEED u000D CARRIAGE RETURN u0020 SPACE u00
 ##### 文件已损坏解决
 
 ```
+sudo spctl --master-disable
+
 sudo xattr -d com.apple.quarantine /Applications/xxxx.app
 ```
+
+##### 在Mac下使用crontab执行定时脚本
+
+[在Mac下使用crontab执行定时脚本](https://tool.4xseo.com/article/311355.html)
+
+##### Jenkins 打包
+
+https://www.cnblogs.com/somepark/p/16813250.html
+
+##### 在APP下载链接里查看
+
+```
+https://itunes.apple.com/lookup?id=951937596.
+```
+##### 黑苹果
+
+https://apple.sqlsec.com/5-%E5%AE%9E%E6%88%98%E6%BC%94%E7%A4%BA/5-7.html
+
+##### 消除更新红点
+
+```
+defaults write com.apple.systempreferences AttentionPrefBundleIDs 0
+
+killall Dock
+```
+
+##### MAC 命令行工具获取手机信息
+
+```
+brew install libimobiledevice
+brew install ideviceinstaller
+https://cloud.tencent.com/developer/article/1536056
+[使用libimobiledevice + ifuse提取iOS沙盒文件](https://cloud.tencent.com/developer/article/1521371)
+```
+
+##### 查看图片元数据
+
+```
+[Exiftool 命令行操作图片元信息](https://blog.csdn.net/weixin_34393428/article/details/88679127)
+```
+
+##### 系统设置扩展没有Xcode
+
+```
+PATH=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support:"$PATH"
+lsregister -f /Applications/Xcode.app
+```
+[修复Xcode Source Editor在masOS的扩展中不显示](https://www.sunyazhou.com/2020/10/XcodeSourceEditorNotWork/)
