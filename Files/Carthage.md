@@ -72,5 +72,7 @@ carthage update Alamofire SnapKit
  <!--https://www.jianshu.com/p/7a0634e14332-->
  <!--https://github.com/Carthage/Carthage-->
  <!--https://www.jianshu.com/p/7a361e9bc6c2-->
+ 
+ [Carthage cocoapods](https://zhuanlan.zhihu.com/p/34618747)
 
 
