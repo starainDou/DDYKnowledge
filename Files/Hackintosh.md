@@ -1,0 +1,5 @@
+* n[macOS Monterey 12.0安装中常见的问题及解决方法](https://blog.daliansky.net/Common-problems-and-solutions-in-macOS-Monterey-12.0-installation.html)
+* [升级黑苹果EFI内OpenCore和驱动等](https://blog.51cto.com/u_15898395/5901458)
+* [苹果 macOS Monterey 12.6.4 (21G526) 原版镜像发布下载](www.dayanzai.me/macos-monterey.html)
+* [OC Auxiliary Tools](https://www.mfpud.com/opencore/ocat/page/2/)
+* [OC(OpenCore) EFI引导版本升级](https://hackintosh.myitnote.com/efi/update.html#_1-挂载-efi-分区)
