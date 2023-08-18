@@ -156,4 +156,18 @@ https://www.rubydoc.info/github/CocoaPods/Xcodeproj/Xcodeproj/Constants
 45 => 'Xcode 3.1',
 ```
 
+> ### xcode配置dsym文件生成
+
+```
+XCode -> Build Settings -> Build Option -> Debug Information Format -> DWARF with dSYM File
+
+XCode -> Build Settings -> Apple Clang - Code Generation -> Generate Debug Symbols -> Yes
+
+查找.dsym文件方法：
+XCode -> Window -> Organizer -> 找到打包好的文件（Show in Finder）-> 选中文件（右键显示包内容）-> dsYMs文件夹下就是了
+```
+
 <!--https://www.jianshu.com/p/4dd914b93555-->
+
+* [xcodebuildsettings](https://xcodebuildsettings.com/)
+* [How can I modify OTHER_LDFLAGS via CocoaPods post-install hook?](https://stackoverflow.com/questions/30244675/how-can-i-modify-other-ldflags-via-cocoapods-post-install-hook)
