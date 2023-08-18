@@ -51,3 +51,32 @@ let words = tokenize(text: text)
 print(words)
 // ["その", "日", "人類", "は", "思い出し", "た", "奴", "ら", "に", "支配", "さ", "れ", "て", "い", "た", "恐怖", "を", "鳥籠", "に", "囚われ", "て", "い", "た", "屈辱", "を"]
 ```
+
+
+NSLinguisticTagger
+
+```
+NSString *string = self.text.text;
+NSLinguisticTaggerOptions options = NSLinguisticTaggerOmitWhitespace | NSLinguisticTaggerJoinNames |NSLinguisticTaggerOmitPunctuation;
+NSArray *arr = [NSLinguisticTagger availableTagSchemesForUnit:NSLinguisticTaggerUnitWord|NSLinguisticTaggerUnitDocument language:@"zh-Hans"];
+NSLinguisticTagger * tagger = [[NSLinguisticTagger alloc]initWithTagSchemes:arr options:options];
+tagger.string = string;
+
+
+NSMutableArray *array = [[NSMutableArray alloc]init];
+NSString *printStr = @"";
+
+[tagger enumerateTagsInRange:NSMakeRange(0, string.length) scheme:NSLinguisticTagSchemeScript  options:options usingBlock:^(NSString * _Nonnull tag, NSRange tokenRange, NSRange sentenceRange, BOOL * _Nonnull stop) {
+    NSString *token = [string substringWithRange:tokenRange];
+    
+    [array addObject:token];
+    
+    //[str stringByAppendingFormat:token];
+    //NSLog(@"%@",array);
+
+}];
+
+for(int i = 0; i < [array count]; i++){
+    printStr = [printStr stringByAppendingFormat:@"%@\n", [array objectAtIndex:i]];
+}
+```
