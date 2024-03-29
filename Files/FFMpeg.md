@@ -11,7 +11,18 @@ ffmpeg -i ${oldFille} -acodec copy -map_metadata -1 -metadata title="com.nwyunli
 
 python3 /Users/mac/Desktop/cocosProject/AiShangXiaoFangKuai/encrypt.py /Users/mac/Downloads/lottie/pic/ com.nwyunlingvideo.mryjios
 
-ffmpeg -i ./MQNewMessageRingStyle2.wav -acodec copy -map_metadata -1 -metadata title="com.nwyunlingvideo.mryjios" -y ./MQNewMessageRingStyle.wav
+ffmpeg -i ./MQNewMessageRingStyle23.wav -acodec copy -map_metadata -1 -metadata title="com.fkbgyes.luckysongios" -y ./MQNewMessageRingStyle2.wav
+
+ffmpeg -i ./MQNewMessageRing3.mp3 -acodec copy -map_metadata -1 -metadata title="com.fkbgyes.luckysongios" -y ./MQNewMessageRing.mp3
+
+ffmpeg -i ./MQSendMessageRing3.mp3 -acodec copy -map_metadata -1 -metadata title="com.fkbgyes.luckysongios" -y ./MQSendMessageRing.mp3
+
+ffmpeg -i 240103001.mp4 -c:a copy -c:v libx265 -preset slow -vf "deblock,hqdn3d" -movflags faststart -max_muxing_queue_size 2048 -threads 8 -tag:v hvc1 -y 240103009.mp4
+
+ffmpeg -i 0.mp4 -c:a copy -c:v libx265 -preset slow -vf "deblock,hqdn3d" -movflags faststart -max_muxing_queue_size 2048 -threads 8 -tag:v hvc1 -y 4.mp4
+
+
+ffmpeg -i 240103002.mp4 -c:a copy -c:v libx265 -preset slower -vf "deblock,hqdn3d" -crf 20 -movflags faststart -max_muxing_queue_size 2048 -threads 16 -tag:v hvc1 -y 240103007.mp4
 ```
 
 * [Mac平台下的FFmpeg的安装编译](https://juejin.cn/post/7005112278706028551)

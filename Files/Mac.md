@@ -34,11 +34,32 @@ select * from MusicListTable_1000;
 全角空格 (u3000)
 u0009 CHARACTER TABULATION u000A LINE FEED u000D CARRIAGE RETURN u0020 SPACE u0085 NEXT LINE u00A0 NBSP u1680 OGHAM SPACE MARK u180E MONGOLIAN VOWEL SEPARATOR u2000 EN QUAD u200A HAIR SPACE u200B ZERO WIDTH SPACE u2028 LINE SEPARATOR u2029 PARAGRAPH SEPARATOR u202F NARROW NO-BREAK SPACE u205F MEDIUM MATHEMATICAL SPACE u3000 IDEOGRAPHIC SPACE
 ```
+##### 查看文件附加属性
+
+```
+// 查看文件夹内所有文件附加属性
+ls -al@
+
+// 查看单个文件附加属性
+ls -l@ confuse.dmg
+xattr -l a.txt
+
+// 删除隔离属性 -r是递归，如果不需要递归可以去除
+sudo xattr -rd com.apple.quarantine /Applications/WebStrom.app
+
+xattr -rd com.apple.quarantine directoryname
+
+// 删除单个文件所有扩展属性
+xattr -c s.7z
+// 递归删除文件夹里所有文件所有扩展属性
+xattr -rc /path/to/directory
+```
 
 ##### 文件已损坏解决
 
 ```
-sudo spctl --master-disable
+// 允许任何来源
+sudo spctl --master-disable 
 
 sudo xattr -d com.apple.quarantine /Applications/xxxx.app
 ```
@@ -83,6 +104,16 @@ https://cloud.tencent.com/developer/article/1536056
 [Exiftool 命令行操作图片元信息](https://blog.csdn.net/weixin_34393428/article/details/88679127)
 ```
 
+##### 显示隐藏文件
+
+```
+// 如果不想立刻重启Finder，去掉 ;killall Finder
+defaultswritecom.apple.finder AppleShowAllFiles-boolean true;killall Finder
+
+也可以快捷键 Command + Shift + .
+Funter是Mac上的一款高级文件隐藏工具
+```
+
 ##### 系统设置扩展没有Xcode
 
 ```
@@ -90,3 +121,5 @@ PATH=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices
 lsregister -f /Applications/Xcode.app
 ```
 [修复Xcode Source Editor在masOS的扩展中不显示](https://www.sunyazhou.com/2020/10/XcodeSourceEditorNotWork/)
+
+https://www.jianshu.com/p/ff6308236a7c

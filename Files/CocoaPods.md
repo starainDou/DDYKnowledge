@@ -5,7 +5,7 @@
 
 1. 查看源，终端输入: ``` sudo gem sources -l ```
 2. 删除已有的源，如: ``` sudo gem sources --remove https://rubygems.org/ ```
-3. 添加国内镜像，如: ``` sudo gem sources --add https://gems.ruby-china.com```
+3. 添加国内镜像，如: ``` sudo gem sources --add https://gems.ruby-china.com/```
 4. 看是否真的添加上: ``` sudo gem sources -l ```
 5. 若出现 ``` https://gems.ruby-china.com ``` 则添加成功
 
@@ -135,8 +135,9 @@ https://luckyframework.org/guides/getting-started/installing
 
 > #### 三、安装
 
+* 安装xcpretty ```  sudo gem install xcpretty ``` 
 * 安装xcodeproj ``` sudo gem install xcodeproj ``` 
-* 安装cocoapods ``` sudo gem install cocoapods  --user-install  或者 brew install cocoapods```
+* 安装cocoapods ``` sudo gem install cocoapods 或者 sudo gem install cocoapods  --user-install  或者 brew install cocoapods```
 * 安装pre版 ``` sudo gem install cocoapods --pre  ```
 * 执行setup ``` pod setup ```
 * 移除 ``` sudo gem uninstall cocoapods ```
@@ -227,6 +228,15 @@ cocoapods-try (1.2.0)
 * SSL: no alertnative certificate subject name matches target host name "github.com"
 
 git config --global http.sslVerify false
+
+
+* Error running '__rvm_make -j16'
+/usr/local/Cellar/openssl@3/3.2.0/include/openssl/err.h:424:1: note: 'ERR_get_error_line_data' has been explicitly marked deprecated here
+
+需要使用 1.1
+```
+brew link --overwrite openssl@1.1
+``
 
 
 > #### 四、使用cocoaPods

@@ -169,5 +169,14 @@ XCode -> Window -> Organizer -> 找到打包好的文件（Show in Finder）-> �
 
 <!--https://www.jianshu.com/p/4dd914b93555-->
 
+> ### 解析project.pbxproj
+
+```
+plutil -convert json project.pbxproj
+
+plutil -convert xml1 -s -r -o project.pbxproj.xml project.pbxproj
+// https://looseyi.github.io/post/sourcecode-cocoapods/08-cocoapods-xcodeproj/
+```
+
 * [xcodebuildsettings](https://xcodebuildsettings.com/)
 * [How can I modify OTHER_LDFLAGS via CocoaPods post-install hook?](https://stackoverflow.com/questions/30244675/how-can-i-modify-other-ldflags-via-cocoapods-post-install-hook)
